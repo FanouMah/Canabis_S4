@@ -1,0 +1,28 @@
+    public void getById(String id) throws Exception{
+        Connection con = null;
+        PreparedStatement prs = null;
+        ResultSet res = null;
+        
+        try {
+            //traitement
+            
+            
+            con.commit();
+        } catch (Exception e) {
+            if (con != null) {
+                con.rollback();   
+            }
+            throw e;
+        }
+        finally{
+            if (con != null) {
+                con.close();
+            }
+            if (prs != null) {
+                prs.close();
+            }
+            if (res != null){
+                res.close();
+            }
+        }
+    }
