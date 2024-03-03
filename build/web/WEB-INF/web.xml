@@ -20,6 +20,22 @@
         <servlet-name>preparedPlanteServelet</servlet-name>
         <servlet-class>servelet.preparedPlanteServelet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>JournalCultureServelet</servlet-name>
+        <servlet-class>servelet.JournalCultureServelet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>preparedJournalCutlureServelet</servlet-name>
+        <servlet-class>servelet.preparedJournalCutlureServelet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>preparedRecolteServelet</servlet-name>
+        <servlet-class>servelet.preparedRecolteServelet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RecolteServelet</servlet-name>
+        <servlet-class>servelet.RecolteServelet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UtilisateurServelet</servlet-name>
         <url-pattern>/UtilisateurServelet</url-pattern>
@@ -39,6 +55,22 @@
     <servlet-mapping>
         <servlet-name>preparedPlanteServelet</servlet-name>
         <url-pattern>/preparedPlanteServelet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JournalCultureServelet</servlet-name>
+        <url-pattern>/JournalCultureServelet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>preparedJournalCutlureServelet</servlet-name>
+        <url-pattern>/preparedJournalCutlureServelet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>preparedRecolteServelet</servlet-name>
+        <url-pattern>/preparedRecolteServelet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RecolteServelet</servlet-name>
+        <url-pattern>/RecolteServelet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

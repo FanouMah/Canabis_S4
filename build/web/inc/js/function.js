@@ -20,6 +20,46 @@ function editPlante(button){
     selectSalleCulture.value = childTr[7].querySelector('span').textContent.trim();
 }
 
+function editJournalCulture(button){
+    var inputDate = document.getElementById('editjcDate');
+    var inputPlante = document.getElementById('selectjcPlante');
+    var inputEtapeCroissance = document.getElementById('editjcEtapeCroissance');
+    var inputNotes = document.getElementById('editjcNotes');
+    var inputId = document.getElementById('editjcid');
+    
+    
+    var td = button.parentNode;
+    var tr = td.parentNode;
+    
+    var childTr = tr.childNodes;
+    
+    inputId.value = childTr[1].textContent.trim();
+    inputDate.value = childTr[3].textContent.trim();
+    inputPlante.value = childTr[5].querySelector('span').textContent.trim();
+    inputEtapeCroissance.value = childTr[7].textContent.trim();
+    inputNotes.value = childTr[9].textContent.trim();
+}
+
+function editRecolte(button){
+    var inputDate = document.getElementById('editrDate');
+    var inputPlante = document.getElementById('selectrPlante');
+    var inputRendement = document.getElementById('editrRendement');
+    var inputQualite = document.getElementById('editrqualite');
+    var inputId = document.getElementById('editrid');
+    
+    
+    var td = button.parentNode;
+    var tr = td.parentNode;
+    
+    var childTr = tr.childNodes;
+    
+    inputId.value = childTr[1].textContent.trim();
+    inputDate.value = childTr[3].textContent.trim();
+    inputPlante.value = childTr[5].querySelector('span').textContent.trim();
+    inputRendement.value = childTr[7].textContent.trim();
+    inputQualite.value = childTr[9].textContent.trim();
+}
+
 function editSalleCulture(button){
     var inputNom = document.getElementById('editslnom');
     var inputTemperature = document.getElementById('editsltemperature');

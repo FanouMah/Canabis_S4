@@ -243,7 +243,55 @@ public class SalleCulture {
                 con.setAutoCommit(false);
             }
             //traitement
-            String query = "SELECT * FROM salleCulture order by salleCulture_id";
+            String query = "SELECT * FROM salleCulture order by CAST(substring(salleCulture_id from 3) AS INTEGER)";
+            prs = con.prepareStatement(query);
+            res = prs.executeQuery();
+            while (res.next()) {
+                list.add(new SalleCulture(res.getString("salleCulture_id"), res.getString("nom_salle"), res.getInt("temperature"), res.getInt("humidite")));
+            }
+            
+            con.commit();
+        } catch (Exception e) {
+            if (con != null) {
+                con.rollback();   
+            }
+            throw e;
+        }
+        finally{
+            if (con != null) {
+                con.close();
+            }
+            if (prs != null) {
+                prs.close();
+            }
+            if (res != null){
+                res.close();
+            }
+        }
+        return list;
+    }
+    
+    public List<SalleCulture> search(String nom,int tempMin,int tempMax,int humMin,int humMax) throws Exception{
+    Connection con = null;
+        PreparedStatement prs = null;
+        ResultSet res = null;
+        List<SalleCulture> list = new ArrayList<>();
+        
+        try {
+            if(con == null){
+                Database pg = new Database("postgresql");
+                pg.openConnection("postgres", "admin", "cannabis");
+                con = pg.getConnection();
+                con.setAutoCommit(false);
+            }
+            //traitement
+            String query = "SELECT * FROM salleCulture where ";
+            
+            if (!nom.isEmpty()) {
+                query += "and LOWER(nom_salle) like '%?%' ";
+            }
+            
+            query += "order by CAST(substring(salleCulture_id from 3) AS INTEGER)";
             prs = con.prepareStatement(query);
             res = prs.executeQuery();
             while (res.next()) {

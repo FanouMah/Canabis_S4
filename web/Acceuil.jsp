@@ -1,3 +1,5 @@
+<%@page import="classes.Recolte"%>
+<%@page import="classes.JournalCulture"%>
 <%@page import="classes.Plante"%>
 <%@page import="java.util.List"%>
 <%@page import="classes.SalleCulture"%>
@@ -133,6 +135,108 @@
           </div>
         </div>
       </div>
+                    
+    <!-- edit journalCulture -->
+    <div class="modal py-5" tabindex="-1" role="dialog" id="modalEditJournalCulture">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content rounded-5 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+              <h5 class="modal-title">Modification Journal de culture</h5>
+              <!-- <h2 class="fw-bold mb-0"></h2> -->
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+      
+            <div class="modal-body p-5 pt-0">  
+              <form id="formEditJournalCulture" method="post" action="JournalCultureServelet?action=update">
+                <div class="form-floating mb-3">
+                    <input type="date" class="form-control rounded-4" name="jcdate" id="editjcDate" placeholder="Date" required>
+                    <label for="editjcDate">Date</label>
+                </div>
+                        
+                <div class="mb-3">
+                    <label for="selectjcPlante" class="form-label">Plante</label>
+                    <select id="selectjcPlante" class="form-select" name="jcplante">
+                    <%  
+                        if(request.getAttribute("listPlante") != null){
+                            List<Plante> listPlante =(List<Plante>) request.getAttribute("listPlante");
+                                
+                            for (Plante p : listPlante) { %>
+                                <option value="<%= p.getId() %>"> <%= p.toString() %></option>
+                            <% }
+                        }
+                    %>
+                    </select>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control rounded-4" name="jcetapeCroissance" id="editjcEtapeCroissance" placeholder="étape de croissance" required>
+                    <label for="editjcEtapeCroissance">étape de croissance</label>
+                </div>
+                            
+                <div class=" mb-3">
+                    <label for="editjcNotes">Notes</label>
+                    <textarea class="form-control rounded-4" id="editjcNotes" name="jcnotes" placeholder="Notes" rows="3"></textarea>
+                </div>
+                  
+                <input type="hidden" name="jcid" id="editjcid" />
+
+                <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+                    
+    <!-- edit recolte -->
+    <div class="modal py-5" tabindex="-1" role="dialog" id="modalEditRecolte">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content rounded-5 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+              <h5 class="modal-title">Modification Récolte</h5>
+              <!-- <h2 class="fw-bold mb-0"></h2> -->
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+      
+            <div class="modal-body p-5 pt-0">  
+              <form id="formEditJournalCulture" method="post" action="RecolteServelet?action=update">
+                <div class="form-floating mb-3">
+                    <input type="date" class="form-control rounded-4" name="rdate" id="editrDate" placeholder="Date" required>
+                    <label for="editrDate">Date</label>
+                </div>
+                        
+                <div class="mb-3">
+                    <label for="selectrPlante" class="form-label">Plante</label>
+                    <select id="selectrPlante" class="form-select" name="rplante">
+                    <%  
+                        if(request.getAttribute("listPlante") != null){
+                            List<Plante> listPlante =(List<Plante>) request.getAttribute("listPlante");
+                                
+                            for (Plante p : listPlante) { %>
+                                <option value="<%= p.getId() %>"> <%= p.toString() %></option>
+                            <% }
+                        }
+                    %>
+                    </select>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="int" class="form-control rounded-4" name="rrendement" id="editrRendement" placeholder="Rendement en gramme" required>
+                    <label for="editrRendement">Rendement en gramme</label>
+                </div>
+                
+                    <div class="form-floating mb-3">
+                    <input type="text" class="form-control rounded-4" name="rqualite" id="editrqualite" placeholder="Qualité" required>
+                    <label for="editrqualite">Qualité</label>
+                </div>
+                  
+                <input type="hidden" name="rid" id="editrid" />
+
+                <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     
     <main>
         <div class="flex-shrink-0 p-3 bg-white" style="width: 20%;">
@@ -169,8 +273,8 @@
               </button>
               <div class="collapse" id="journalCulture-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                  <li><a href="Acceuil.jsp?listJournalCulture" class="link-dark rounded">Liste</a></li>
-                  <li><a href="Acceuil.jsp?addJournalCulture" class="link-dark rounded">Ajouter</a></li>
+                  <li><a href="preparedJournalCutlureServelet?action=listJournalCulture" class="link-dark rounded">Liste</a></li>
+                  <li><a href="preparedPlanteServelet?action=addJournalCulture" class="link-dark rounded">Ajouter</a></li>
                 </ul>
               </div>
             </li>
@@ -180,8 +284,8 @@
               </button>
               <div class="collapse" id="recolte-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                  <li><a href="Acceuil.jsp?listRecolte" class="link-dark rounded">Liste</a></li>
-                  <li><a href="Acceuil.jsp?addRecolte" class="link-dark rounded">Ajouter</a></li>
+                  <li><a href="preparedRecolteServelet?action=listRecolte" class="link-dark rounded">Liste</a></li>
+                  <li><a href="preparedPlanteServelet?action=addRecolte" class="link-dark rounded">Ajouter</a></li>
                 </ul>
               </div>
             </li>
@@ -317,7 +421,7 @@
 
                 <% if(request.getParameter("listPlante") != null){ %>
                 <script>showCollapse("plantes-collapse");</script>
-                    <h3 class="mb-5">Ajouter une salle de culture</h3>
+                    <h3 class="mb-5">Liste des Plantes</h3>
                     
                     <table class="table">
                         <thead>
@@ -363,12 +467,12 @@
 
                         <div class="form-floating mb-3">
                             <input type="number" class="form-control rounded-4" name="temperature" id="floatingTemperature" placeholder="Température" required>
-                            <label for="floatingFirstName">Température</label>
+                            <label for="floatingFirstName">Température (°c)</label>
                         </div>
 
                         <div class="form-floating mb-3">
                           <input type="number" class="form-control rounded-4" name="humidite" id="floatingHumidite" placeholder="Humidité" required>
-                          <label for="floatingHumidite">Humidité</label>
+                          <label for="floatingHumidite">Humidité (%)</label>
                         </div>
 
                         <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
@@ -412,11 +516,146 @@
                 <% if(request.getParameter("addJournalCulture") != null){ %>
                 <script>showCollapse("journalCulture-collapse");</script>
 
+                <h3 class="mb-5">Ajouter journal de culture</h3>
+                    
+                    <form id="formJournalCulture" method="post" action="JournalCultureServelet?action=create">
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control rounded-4" name="date" id="floatingDate" placeholder="Date" required>
+                            <label for="floatingDate">Date</label>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="selectPlante" class="form-label">Plante</label>
+                            <select id="selectPlante" class="form-select" name="plante">
+                            <%  
+                                List<Plante> listPlante =(List<Plante>) request.getAttribute("listPlante");
+                                for (Plante p : listPlante) {
+                            %>
+                                <option value="<%= p.getId() %>"> <%= p.toString() %> </option>
+                            <% } %>
+                            </select>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-4" name="etapeCroissance" id="floatingEtapeCroissance" placeholder="étape de croissance" required>
+                            <label for="floatingEtapeCroissance">étape de croissance</label>
+                        </div>
+                            
+                        <div class=" mb-3">
+                            <label for="floatingNotes">Notes</label>
+                            <textarea class="form-control rounded-4" id="floatingNotes" name="notes" placeholder="Notes" rows="3"></textarea>
+                        </div>
+                        
+                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
+                    </form>
                 <% } %>
 
                 <% if(request.getParameter("listJournalCulture") != null){ %>
                 <script>showCollapse("journalCulture-collapse");</script>
+                    <h3 class="mb-5">Journal de culture</h3>
+                    
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Plante</th>
+                            <th scope="col">étape de croissance</th>
+                            <th scope="col">Notes</th>
+                            <th scope="col">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <%  
+                                List<JournalCulture> listJournalCulture =(List<JournalCulture>) request.getAttribute("listJournalCulture");
+                                for (JournalCulture jc : listJournalCulture) {
+                            %>
+                                <tr>
+                                <th scope="row"><%= jc.getId()%></th>
+                                <td><%= jc.getDate() %></td>
+                                <td><%= jc.getPlante().toString() %> <span hidden="" ><%= jc.getPlante().getId() %></span> </td>
+                                <td><%= jc.getEtapeCroissance() %> </td>
+                                <td><%= jc.getNotes() %> </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditJournalCulture" onclick="editJournalCulture(this)" >edit</button>
+                                    <a class="btn btn-danger" href="JournalCultureServelet?action=remove&id=<%= jc.getId() %>">remove</a>
+                                </td>
+                            </tr>  
+                            <% } %>
+                        </tbody>
+                      </table>
+                <% } %>
+                
+                <!-- recoltes -->
+                <% if(request.getParameter("addRecolte") != null){ %>
+                <script>showCollapse("recolte-collapse");</script>
+                    <h3 class="mb-5">Ajouter récolte</h3>
+                    
+                    <form id="formRecolte" method="post" action="RecolteServelet?action=create">
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control rounded-4" name="date" id="floatingDate" placeholder="Date" required>
+                            <label for="floatingDate">Date</label>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="selectPlante" class="form-label">Plante</label>
+                            <select id="selectPlante" class="form-select" name="plante">
+                            <%  
+                                List<Plante> listPlante =(List<Plante>) request.getAttribute("listPlante");
+                                for (Plante p : listPlante) {
+                            %>
+                                <option value="<%= p.getId() %>"> <%= p.toString() %> </option>
+                            <% } %>
+                            </select>
+                        </div>
 
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control rounded-4" name="rendement" id="floatingRendement" placeholder="Redement en gramme" required>
+                            <label for="floatingRendement">Redement en gramme</label>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-4" name="qualite" id="floatingQualite" placeholder="Qualité" required>
+                            <label for="floatingQualite">Qualité</label>
+                        </div>
+                        
+                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
+                    </form>
+                <% } %>
+                <% if(request.getParameter("listRecolte") != null){ %>
+                <script>showCollapse("recolte-collapse");</script>
+                    <h3 class="mb-5">Liste récolte</h3>
+                
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Plante</th>
+                            <th scope="col">Rendement (g)</th>
+                            <th scope="col">Qualité</th>
+                            <th scope="col">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <%  
+                                List<Recolte> listRecolte =(List<Recolte>) request.getAttribute("listRecolte");
+                                for (Recolte r : listRecolte) {
+                            %>
+                                <tr>
+                                <th scope="row"><%= r.getId()%></th>
+                                <td><%= r.getDate() %></td>
+                                <td><%= r.getPlante().toString() %> <span hidden="" ><%= r.getPlante().getId() %></span> </td>
+                                <td><%= r.getRendement() %> </td>
+                                <td><%= r.getQualite() %> </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditRecolte" onclick="editRecolte(this)" >edit</button>
+                                    <a class="btn btn-danger" href="RecolteServelet?action=remove&id=<%= r.getId() %>">remove</a>
+                                </td>
+                            </tr>  
+                            <% } %>
+                        </tbody>
+                      </table>
                 <% } %>
             </div>
         </div>

@@ -7,6 +7,7 @@ package classes;
 
 import connect.Database;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,17 +18,24 @@ import java.util.List;
  *
  * @author PC
  */
-public class Plante {
+public class Recolte {
     String id;
-    String espece;
-    String variete;
-    SalleCulture salleCulture = new SalleCulture();
+    Date date;
+    Plante plante = new Plante();
+    int rendement;
+    String qualite;
 
-    @Override
-    public String toString() {
-        return id+" - "+espece+" - "+variete+" ("+salleCulture.getNom()+")";
+    public Recolte(String id, Date date, Plante plante, int rendement, String qualite) {
+        this.id = id;
+        this.date = date;
+        this.plante = plante;
+        this.rendement = rendement;
+        this.qualite = qualite;
     }
-    
+
+    public Recolte() {
+    }
+
     public String getId() {
         return id;
     }
@@ -36,38 +44,36 @@ public class Plante {
         this.id = id;
     }
 
-    public String getEspece() {
-        return espece;
+    public Date getDate() {
+        return date;
     }
 
-    public void setEspece(String espece) {
-        this.espece = espece;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public String getVariete() {
-        return variete;
+    public Plante getPlante() {
+        return plante;
     }
 
-    public void setVariete(String variete) {
-        this.variete = variete;
+    public void setPlante(Plante plante) {
+        this.plante = plante;
     }
 
-    public SalleCulture getSalleCulture() {
-        return salleCulture;
+    public int getRendement() {
+        return rendement;
     }
 
-    public void setSalleCulture(SalleCulture salleCulture) {
-        this.salleCulture = salleCulture;
+    public void setRendement(int rendement) {
+        this.rendement = rendement;
     }
 
-    public Plante() {
+    public String getQualite() {
+        return qualite;
     }
 
-    public Plante(String id, String espece, String variete, SalleCulture salleCulture) {
-        this.id = id;
-        this.espece = espece;
-        this.variete = variete;
-        this.salleCulture = salleCulture;
+    public void setQualite(String qualite) {
+        this.qualite = qualite;
     }
     
     public void getById(String id) throws Exception{
@@ -83,16 +89,17 @@ public class Plante {
                 con.setAutoCommit(false);
             }
             //traitement
-            String query = "SELECT * FROM plante where plante_id = ?";
+            String query = "SELECT * FROM recolte where recolte_id = ?";
             prs = con.prepareStatement(query);
             prs.setString(1, id);
             res = prs.executeQuery();
             
             if(res.next()){
-                setId(res.getString("plante_id"));
-                setEspece(res.getString("espece"));
-                setVariete(res.getString("variete"));
-                this.salleCulture.getById(res.getString("salleCulture_id"));
+                setId(res.getString("journalCulture_id"));
+                setDate(res.getDate("date"));
+                this.plante.getById(res.getString("plante_id"));
+                setRendement(res.getInt("rendement"));
+                setQualite(res.getString("qualite"));
             }
             
             con.commit();
@@ -114,8 +121,53 @@ public class Plante {
             }
         }
     }
-
-    public void create(Plante plante) throws Exception{
+    
+    public List<Recolte> getAll() throws Exception{
+    Connection con = null;
+        PreparedStatement prs = null;
+        ResultSet res = null;
+        List<Recolte> list = new ArrayList<>();
+        
+        try {
+            if(con == null){
+                Database pg = new Database("postgresql");
+                pg.openConnection("postgres", "admin", "cannabis");
+                con = pg.getConnection();
+                con.setAutoCommit(false);
+            }
+            //traitement
+            String query = "SELECT * FROM recolte order by CAST(substring(recolte_id from 3) AS INTEGER)";
+            prs = con.prepareStatement(query);
+            res = prs.executeQuery();
+            while (res.next()) {
+                //add
+                Plante p = new Plante();
+                p.getById(res.getString("plante_id"));
+                list.add(new Recolte(res.getString("recolte_id"),res.getDate("date"),p,res.getInt("rendement"),res.getString("qualite")));
+            }
+            
+            con.commit();
+        } catch (Exception e) {
+            if (con != null) {
+                con.rollback();   
+            }
+            throw e;
+        }
+        finally{
+            if (con != null) {
+                con.close();
+            }
+            if (prs != null) {
+                prs.close();
+            }
+            if (res != null){
+                res.close();
+            }
+        }
+        return list;
+    }
+    
+    public void create(Recolte recolte) throws Exception{
         Connection con = null;
         PreparedStatement prs = null;
         ResultSet res = null;
@@ -128,11 +180,12 @@ public class Plante {
                 con.setAutoCommit(false);
             }
             //traitement
-            String query = "INSERT INTO plante (espece,variete,salleCulture_id) VALUES (?,?,?)";
+            String query = "INSERT INTO recolte (plante_id,date,rendement,qualite) VALUES (?,?,?,?)";
             prs = con.prepareStatement(query);
-            prs.setString(1, plante.getEspece());
-            prs.setString(2, plante.getVariete());
-            prs.setString(3, plante.getSalleCulture().getId());
+            prs.setString(1,recolte.getPlante().getId());
+            prs.setDate(2,recolte.getDate());
+            prs.setInt(3,recolte.getRendement());
+            prs.setString(4,recolte.getQualite());
             prs.executeUpdate();
             
             con.commit();
@@ -155,7 +208,7 @@ public class Plante {
         }
     }
     
-    public void update(Plante plante) throws Exception{
+    public void update(Recolte recolte) throws Exception{
         Connection con = null;
         PreparedStatement prs = null;
         ResultSet res = null;
@@ -168,12 +221,13 @@ public class Plante {
                 con.setAutoCommit(false);
             }
             //traitement
-            String query = "UPDATE plante SET espece = ?, variete = ?, salleCulture_id = ? WHERE plante_id = ?";
+            String query = "UPDATE recolte SET plante_id = ?, date = ?, rendement = ?, qualite = ? WHERE recolte_id = ?";
             prs = con.prepareStatement(query);
-            prs.setString(1, plante.getEspece());
-            prs.setString(2, plante.getVariete());
-            prs.setString(3, plante.getSalleCulture().getId());
-            prs.setString(4, plante.getId());
+            prs.setString(1, recolte.getPlante().getId());
+            prs.setDate(2, recolte.getDate());
+            prs.setInt(3, recolte.getRendement());
+            prs.setString(4, recolte.getQualite());
+            prs.setString(5, recolte.getId());
             prs.executeUpdate();
             
             con.commit();
@@ -209,7 +263,7 @@ public class Plante {
                 con.setAutoCommit(false);
             }
             //traitement
-            String query = "DELETE FROM plante WHERE plante_id = ?";
+            String query = "DELETE FROM recolte WHERE recolte_id = ?";
             prs = con.prepareStatement(query);
             prs.setString(1, id);
             prs.executeUpdate();
@@ -232,50 +286,5 @@ public class Plante {
                 res.close();
             }
         }
-    }
-    
-    public List<Plante> getAll() throws Exception{
-    Connection con = null;
-        PreparedStatement prs = null;
-        ResultSet res = null;
-        List<Plante> list = new ArrayList<>();
-        
-        try {
-            if(con == null){
-                Database pg = new Database("postgresql");
-                pg.openConnection("postgres", "admin", "cannabis");
-                con = pg.getConnection();
-                con.setAutoCommit(false);
-            }
-            //traitement
-            String query = "SELECT * FROM plante order by CAST(substring(plante_id from 3) AS INTEGER)";
-            prs = con.prepareStatement(query);
-            res = prs.executeQuery();
-            while (res.next()) {
-                //add
-                SalleCulture s = new SalleCulture();
-                s.getById(res.getString("salleCulture_id"));
-                list.add(new Plante(res.getString("plante_id"),res.getString("espece"),res.getString("variete"),s));
-            }
-            
-            con.commit();
-        } catch (Exception e) {
-            if (con != null) {
-                con.rollback();   
-            }
-            throw e;
-        }
-        finally{
-            if (con != null) {
-                con.close();
-            }
-            if (prs != null) {
-                prs.close();
-            }
-            if (res != null){
-                res.close();
-            }
-        }
-        return list;
     }
 }

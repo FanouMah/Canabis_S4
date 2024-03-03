@@ -53,7 +53,7 @@ create table journalCulture (
 
 create sequence seq_recolte;
 create table recolte (
-    recolte_id VARCHAR(20) DEFAULT concat('RC' || nextval('seq_recolte')) PRIMARY KEY
+    recolte_id VARCHAR(20) DEFAULT concat('RC' || nextval('seq_recolte')) PRIMARY KEY,
     plante_id VARCHAR(20) REFERENCES plante(plante_id),
     date DATE NOT NULL,
     rendement INT NOT NULL, 
