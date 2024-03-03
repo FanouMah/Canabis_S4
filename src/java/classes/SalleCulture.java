@@ -85,7 +85,7 @@ public class SalleCulture {
             
             if(res.next()){
                 setId(res.getString("salleCulture_id"));
-                setNom(res.getString("nom"));
+                setNom(res.getString("nom_salle"));
                 setTemperature(res.getInt("temperature"));
                 setHumidite(res.getInt("humidite"));
             }
@@ -110,7 +110,7 @@ public class SalleCulture {
         }
     }
     
-    public void save(SalleCulture salle) throws Exception{
+    public void create(SalleCulture salle) throws Exception{
             Connection con = null;
             PreparedStatement prs = null;
             ResultSet res = null;
@@ -243,7 +243,7 @@ public class SalleCulture {
                 con.setAutoCommit(false);
             }
             //traitement
-            String query = "SELECT * FROM salleCulture";
+            String query = "SELECT * FROM salleCulture order by salleCulture_id";
             prs = con.prepareStatement(query);
             res = prs.executeQuery();
             while (res.next()) {

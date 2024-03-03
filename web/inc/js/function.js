@@ -3,19 +3,38 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-function editSalleCulture(button){
+function editPlante(button){
+    var inputEspece = document.getElementById('editpespece');
+    var inputId = document.getElementById('editpid');
+    var inputVariete = document.getElementById('editpvariete');
+    var selectSalleCulture = document.getElementById('selecteditpsc');
+    
     var td = button.parentNode;
     var tr = td.parentNode;
     
     var childTr = tr.childNodes;
     
-    for (var i = 2; i < childTr.length - 2; i++) {
-        var value = childTr[i].textContent.trim();
-        childTr[i].innerHTML = "<input type='text' class='form-control'  value='"+value+"'></input>";
-    }
+    inputId.value = childTr[1].textContent.trim();
+    inputEspece.value = childTr[3].textContent.trim();
+    inputVariete.value = childTr[5].textContent.trim();
+    selectSalleCulture.value = childTr[7].querySelector('span').textContent.trim();
+}
+
+function editSalleCulture(button){
+    var inputNom = document.getElementById('editslnom');
+    var inputTemperature = document.getElementById('editsltemperature');
+    var inputHumidite = document.getElementById('editslhumidite');
+    var inputId = document.getElementById('editslid');
     
+    var td = button.parentNode;
+    var tr = td.parentNode;
     
+    var childTr = tr.childNodes;
     
+    inputId.value = childTr[1].textContent.trim();
+    inputNom.value = childTr[3].textContent.trim();
+    inputTemperature.value = childTr[5].textContent.trim();
+    inputHumidite.value = childTr[7].textContent.trim();
 }
 
 function alert(message, type) {

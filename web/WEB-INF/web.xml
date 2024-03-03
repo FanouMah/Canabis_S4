@@ -8,6 +8,18 @@
         <servlet-name>SalleCultureServelet</servlet-name>
         <servlet-class>servelet.SalleCultureServelet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>preparedSalleCutlureServelet</servlet-name>
+        <servlet-class>servelet.preparedSalleCutlureServelet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PlanteServelet</servlet-name>
+        <servlet-class>servelet.PlanteServelet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>preparedPlanteServelet</servlet-name>
+        <servlet-class>servelet.preparedPlanteServelet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UtilisateurServelet</servlet-name>
         <url-pattern>/UtilisateurServelet</url-pattern>
@@ -15,6 +27,18 @@
     <servlet-mapping>
         <servlet-name>SalleCultureServelet</servlet-name>
         <url-pattern>/SalleCultureServelet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>preparedSalleCutlureServelet</servlet-name>
+        <url-pattern>/preparedSalleCutlureServelet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PlanteServelet</servlet-name>
+        <url-pattern>/PlanteServelet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>preparedPlanteServelet</servlet-name>
+        <url-pattern>/preparedPlanteServelet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

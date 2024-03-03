@@ -49,7 +49,7 @@
     <title>Connexion</title>
 </head>
 <body class="text-center">
-    <div id="alertPlaceholder"></div>
+    <div id="alertPlaceholder" class="m-2 top-0 end-0 position-fixed"></div>
     <div class="modal modal-signin py-5" tabindex="-1" role="dialog" id="modalSignin">
         <div class="modal-dialog" role="document">
           <div class="modal-content rounded-5 shadow">

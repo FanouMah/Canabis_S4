@@ -86,7 +86,7 @@ public class Plante {
                 setId(res.getString("plante_id"));
                 setEspece(res.getString("espece"));
                 setVariete(res.getString("variete"));
-                this.getById(res.getString("salleCulture_id"));
+                this.salleCulture.getById(res.getString("salleCulture_id"));
             }
             
             con.commit();
@@ -109,7 +109,7 @@ public class Plante {
         }
     }
 
-    public void save(Plante plante) throws Exception{
+    public void create(Plante plante) throws Exception{
         Connection con = null;
         PreparedStatement prs = null;
         ResultSet res = null;
@@ -242,7 +242,7 @@ public class Plante {
                 con.setAutoCommit(false);
             }
             //traitement
-            String query = "SELECT * FROM plante";
+            String query = "SELECT * FROM plante order by plante_id";
             prs = con.prepareStatement(query);
             res = prs.executeQuery();
             while (res.next()) {

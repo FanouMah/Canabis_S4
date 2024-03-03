@@ -1,3 +1,4 @@
+<%@page import="classes.Plante"%>
 <%@page import="java.util.List"%>
 <%@page import="classes.SalleCulture"%>
 <%@page import="classes.Utilisateur"%>
@@ -48,7 +49,91 @@
     <script src="inc/js/function.js"></script>
 </head>
 <body>
-    <div id="alertPlaceholder"></div>
+    <div id="alertPlaceholder" class="m-2 top-0 end-0 position-fixed"></div>
+    
+    <!-- edit salle culture -->
+    <div class="modal py-5" tabindex="-1" role="dialog" id="modalEditSalleCulture">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content rounded-5 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+              <h5 class="modal-title">Modification Salles de culture</h5>
+              <!-- <h2 class="fw-bold mb-0"></h2> -->
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+      
+            <div class="modal-body p-5 pt-0">  
+              <form id="formEditSalleCulture" method="post" action="SalleCultureServelet?action=update">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control rounded-4" name="slnom" id="editslnom" placeholder="Nom" required>
+                    <label for="editslnom">Nom</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control rounded-4" name="sltemperature" id="editsltemperature" placeholder="Température (°c)" required>
+                    <label for="editsltemperature">Température (°c)</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                  <input type="number" class="form-control rounded-4" name="slhumidite" id="editslhumidite" placeholder="Humidité (%)" required>
+                  <label for="editslhumidite">Humidité (%)</label>
+                </div>
+                  
+                <input type="hidden" name="slid" id="editslid" />
+
+                <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    
+    <!-- edit Plante -->
+    <div class="modal py-5" tabindex="-1" role="dialog" id="modalEditPlante">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content rounded-5 shadow">
+            <div class="modal-header p-5 pb-4 border-bottom-0">
+              <h5 class="modal-title">Modification Plante</h5>
+              <!-- <h2 class="fw-bold mb-0"></h2> -->
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+      
+            <div class="modal-body p-5 pt-0">  
+              <form id="formEditPlante" method="post" action="PlanteServelet?action=update">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control rounded-4" name="pespece" id="editpespece" placeholder="Espèce" required>
+                    <label for="pespece">Espèce</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control rounded-4" name="pvariete" id="editpvariete" placeholder="Variété" required>
+                    <label for="pvariete">Variété</label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="selecteditpsc" class="form-label">Salle de culture</label>
+                    <select id="selecteditpsc" class="form-select" name="psc">
+                        <%  
+                            if(request.getAttribute("listSalleCulture") != null){
+                                List<SalleCulture> lsc =(List<SalleCulture>) request.getAttribute("listSalleCulture");
+                             
+                                for(SalleCulture s : lsc){ %>
+                                    <option value="<%= s.getId() %>"><%= s.getNom() %></option>
+                                <% }
+                            }
+                        %>
+                    </select>
+                </div>
+                  
+                <input type="hidden" name="pid" id="editpid" />
+
+                <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    
     <main>
         <div class="flex-shrink-0 p-3 bg-white" style="width: 20%;">
           <a href="Acceuil.jsp" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
@@ -62,8 +147,8 @@
               </button>
               <div class="collapse" id="plantes-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                  <li><a href="Acceuil.jsp?listPlante" class="link-dark rounded">Liste</a></li>
-                  <li><a href="Acceuil.jsp?addPlante" class="link-dark rounded">Ajouter</a></li>
+                  <li><a href="preparedPlanteServelet?action=listPlante" class="link-dark rounded">Liste</a></li>
+                  <li><a href="preparedSalleCutlureServelet?action=addPlante" class="link-dark rounded">Ajouter</a></li>
                 </ul>
               </div>
             </li>
@@ -73,8 +158,7 @@
               </button>
               <div class="collapse" id="salleCulture-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="Acceuil.jsp?SearchSalleCulture" class="link-dark rounded">Recherche</a></li>
-                    <li><a href="Acceuil.jsp?listSalleCulture" class="link-dark rounded">Liste</a></li>
+                    <li><a href="preparedSalleCutlureServelet?action=listSalleCulture" class="link-dark rounded">Liste</a></li>
                     <li><a href="Acceuil.jsp?addSalleCulture" class="link-dark rounded">Ajouter</a></li>
                 </ul>
               </div>
@@ -204,11 +288,66 @@
                 <script>showCollapse("plantes-collapse");</script>
                     <h3 class="mb-5">Ajouter une plante</h3>
                     
+                    <form id="formPlante" method="post" action="PlanteServelet?action=create">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-4" name="espece" id="floatingEspece" placeholder="Espèce" required>
+                            <label for="floatingEspece">Espèce</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-4" name="variete" id="floatingVariete" placeholder="Variété" required>
+                            <label for="floatingVariete">Variété</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="selectSalleCulture" class="form-label">Salle de culture</label>
+                            <select id="selectSalleCulture" class="form-select" name="salleCulture">
+                            <%  
+                                List<SalleCulture> listSalleCulture =(List<SalleCulture>) request.getAttribute("listSalleCulture");
+                                for (SalleCulture sc : listSalleCulture) {
+                            %>
+                                <option value="<%= sc.getId() %>"><%= sc.getNom() %></option>
+                            <% } %>
+                            </select>
+                        </div>
+                        
+                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
+                    </form>
                 <% } %>
 
                 <% if(request.getParameter("listPlante") != null){ %>
                 <script>showCollapse("plantes-collapse");</script>
+                    <h3 class="mb-5">Ajouter une salle de culture</h3>
                     
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Espèce</th>
+                            <th scope="col">Variété</th>
+                            <th scope="col">Salle de culture</th>
+                            <th scope="col">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <%  
+                                List<Plante> listPlante =(List<Plante>) request.getAttribute("listPlante");
+                                for (Plante p : listPlante) {
+                            %>
+                                <tr>
+                                <th scope="row"><%= p.getId()%></th>
+                                <td><%= p.getEspece() %></td>
+                                <td><%= p.getVariete() %></td>
+                                <td><%= p.getSalleCulture().getNom() %> <span hidden="" ><%= p.getSalleCulture().getId()%></span> </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditPlante" onclick="editPlante(this)" >edit</button>
+                                    <a class="btn btn-danger" href="PlanteServelet?action=remove&id=<%= p.getId()%>">remove</a>
+                                </td>
+                            </tr>  
+                            <% } %>
+                        </tbody>
+                      </table>
+
                 <% } %>
 
                 <!-- salleCulture -->
@@ -250,17 +389,17 @@
                           </tr>
                         </thead>
                         <tbody>
-                            <%  SalleCulture salle = new SalleCulture();
-                                List<SalleCulture> listSalleCulture = salle.getAll();
-                                
-                                for (SalleCulture s : listSalleCulture) { %>
-                            <tr>
+                            <%  
+                                List<SalleCulture> listSalleCulture =(List<SalleCulture>) request.getAttribute("listSalleCulture");
+                                for (SalleCulture s : listSalleCulture) {
+                            %>
+                                <tr>
                                 <th scope="row"><%= s.getId()%></th>
                                 <td><%= s.getNom()%></td>
                                 <td><%= s.getTemperature()%></td>
                                 <td><%= s.getHumidite()%></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary" onclick="editSalleCulture(this)">edit</button>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditSalleCulture" onclick="editSalleCulture(this)" >edit</button>
                                     <a class="btn btn-danger" href="SalleCultureServelet?action=remove&id=<%= s.getId()%>">remove</a>
                                 </td>
                             </tr>  

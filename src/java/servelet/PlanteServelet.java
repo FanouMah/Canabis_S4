@@ -5,9 +5,12 @@
  */
 package servelet;
 
+import classes.Plante;
 import classes.SalleCulture;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author PC
  */
-public class SalleCultureServelet extends HttpServlet {
+public class PlanteServelet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,10 +39,10 @@ public class SalleCultureServelet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SalleCultureServelet</title>");            
+            out.println("<title>Servlet PlanteServelet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SalleCultureServelet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet PlanteServelet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,12 +60,12 @@ public class SalleCultureServelet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-                String action = request.getParameter("action");
+        String action = request.getParameter("action");
         if (!action.isEmpty() || action == null || action == "") {
             
             switch (action){
                 case  "remove":
-                    removeSalleCulture(request, response);
+                    removePlante(request, response);
                     break;
             }
         }
@@ -84,70 +87,79 @@ public class SalleCultureServelet extends HttpServlet {
             
             switch (action){
                 case  "create":
-                    createSalleCulture(request, response);
+                    createPlante(request, response);
                     break;
                 case  "update":
-                    updateSalleCulture(request, response);
+                    updatePlante(request, response);
                     break;
             }
         }
     }
-    
-    protected void removeSalleCulture(HttpServletRequest request, HttpServletResponse response)
+
+    protected void removePlante(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String id = request.getParameter("id");
         
-        SalleCulture salle = new SalleCulture();
+        Plante plante = new Plante();
         
         try {
-            salle.delete(id);
-            request.setAttribute("success", "Salle de culture "+id+" supprimer");
-            request.getRequestDispatcher("preparedSalleCutlureServelet?action=listSalleCulture").forward(request, response);
+            plante.delete(id);
+            request.setAttribute("success", "plante "+id+" supprimer");
+            request.getRequestDispatcher("preparedPlanteServelet?action=listPlante").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("preparedSalleCutlureServelet?action=listSalleCulture").forward(request, response);
+            request.getRequestDispatcher("preparedPlanteServelet?action=listPlante").forward(request, response);
         }
     }   
     
-    protected void createSalleCulture(HttpServletRequest request, HttpServletResponse response)
+    protected void createPlante(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String nom = request.getParameter("nom");
-        int temperature = Integer.valueOf(request.getParameter("temperature"));
-        int humidite = Integer.valueOf(request.getParameter("humidite"));
+        String espece = request.getParameter("espece");
+        String variete = request.getParameter("variete");
+        String idSalleCulture = request.getParameter("salleCulture");
         
-        SalleCulture salle = new SalleCulture(null, nom, temperature, humidite);
+        SalleCulture salle = new SalleCulture();
+        try {
+            salle.getById(idSalleCulture);
+        } catch (Exception ex) {
+            Logger.getLogger(PlanteServelet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        Plante plante = new Plante(null,espece, variete, salle);
         
         try {
-            salle.create(salle);
-            request.setAttribute("success", "Salle de culture ajoutée");
-            request.getRequestDispatcher("Acceuil.jsp?addSalleCulture").forward(request, response);
+            plante.create(plante);
+            request.setAttribute("success", "Plante ajoutée");
+            request.getRequestDispatcher("preparedSalleCutlureServelet?action=addPlante").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("Acceuil.jsp?addSalleCulture").forward(request, response);
+            request.getRequestDispatcher("preparedSalleCutlureServelet?action=addPlante").forward(request, response);
         }
     }
     
-    protected void updateSalleCulture(HttpServletRequest request, HttpServletResponse response)
+    protected void updatePlante(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String id = request.getParameter("slid");
-        String nom = request.getParameter("slnom");
-        String strTemperature = request.getParameter("sltemperature");
-        String strHumidite = request.getParameter("slhumidite");
-        int temperature = Integer.valueOf(strTemperature);
-        int humidite = Integer.valueOf(strHumidite);
+        String idPlante = request.getParameter("pid");
+        String espece = request.getParameter("pespece");
+        String variete = request.getParameter("pvariete");
+        String idSalleCulture = request.getParameter("psc");
         
-        SalleCulture salle = new SalleCulture(id, nom, temperature, humidite);
-        
+        SalleCulture salle = new SalleCulture();
         try {
-            salle.update(salle);
-            request.setAttribute("success", "Salle de culture "+id+" modifiée");
-            request.getRequestDispatcher("preparedSalleCutlureServelet?action=listSalleCulture").forward(request, response);
+            salle.getById(idSalleCulture);
+        } catch (Exception ex) {
+            Logger.getLogger(PlanteServelet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Plante plante = new Plante(idPlante,espece, variete, salle);
+        try {
+            plante.update(plante);
+            request.setAttribute("success", "Plante "+idPlante+" modifiée");
+            request.getRequestDispatcher("preparedPlanteServelet?action=listPlante").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
-            request.getRequestDispatcher("preparedSalleCutlureServelet?action=listSalleCulture").forward(request, response);
+            request.getRequestDispatcher("preparedPlanteServelet?action=listPlante").forward(request, response);
         }
     }
-
     /**
      * Returns a short description of the servlet.
      *
