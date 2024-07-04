@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -164,28 +165,34 @@ public class UtilisateurServelet extends HttpServlet {
             request.getRequestDispatcher("Acceuil.jsp?setting").forward(request, response);
         }   
     }
-
+    
     protected void updatePwd(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String password = request.getParameter("password");
         String newPassword = request.getParameter("newPassword");
         String passwordConf = request.getParameter("passwordConf");
         String id = request.getParameter("id");
-        
+
         Utilisateur user = new Utilisateur();
         try {
             user.getById(id);
-            if(!password.equals(user.getPassword())){
-                request.setAttribute("error", "pwd");
+
+            if (!BCrypt.checkpw(password, user.getPassword())) {
+                request.setAttribute("errorPassword", "Mot de passe incorrect.");
                 request.getRequestDispatcher("Acceuil.jsp?setting").forward(request, response);
+                return;
             }
-            if(!newPassword.equals(passwordConf)){
-                request.setAttribute("error", "Vérifier le nouveau mot de passe saisis");
+
+            if (!newPassword.equals(passwordConf)) {
+                request.setAttribute("errorPasswordConf", "Les nouveaux mots de passe ne correspondent pas.");
                 request.getRequestDispatcher("Acceuil.jsp?setting").forward(request, response);
+                return;
             }
+
             user.changePassword(newPassword);
-            request.setAttribute("success", "Mot de passe changée");
+            request.setAttribute("success", "Mot de passe changé avec succès.");
             request.getRequestDispatcher("Acceuil.jsp?setting").forward(request, response);
+
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("Acceuil.jsp?setting").forward(request, response);

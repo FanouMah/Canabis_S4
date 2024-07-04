@@ -51,6 +51,7 @@
     <script src="inc/js/function.js"></script>
 </head>
 <body>
+
     <div id="alertPlaceholder" class="m-2 top-0 end-0 position-fixed"></div>
     
     <!-- edit salle culture -->
@@ -359,7 +360,9 @@
                     <h3 class="mb-5">Changer le mot de passe</h3>
                     <form id="formChangePassword" action="UtilisateurServelet?action=updatePwd" method="post">
                         <div class="input-group has-password-toggle position-relative mb-3">
-                            <input class="form-control" type="password" name="password" id="password" placeholder="Mot de passe" aria-describedby="validationServerPasswordFeedback" required>
+                            <input class="form-control <%= request.getAttribute("errorPassword") != null ? "is-invalid" : "" %>" 
+                                   type="password" name="password" id="password" placeholder="Mot de passe" 
+                                   aria-describedby="validationServerPasswordFeedback" required>
                             <span class="input-group-text password-toggle" id="passwordToggle">
                                 <i class="bi bi-eye"></i>
                             </span>
@@ -369,15 +372,20 @@
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control rounded-4" name="newPassword" id="floatingPassword" placeholder="Nouveau mot de passe" required>
+                            <input type="password" class="form-control rounded-4 <%= request.getAttribute("errorNewPassword") != null ? "is-invalid" : "" %>" 
+                                   name="newPassword" id="floatingPassword" placeholder="Nouveau mot de passe" required>
                             <label for="floatingPassword">Nouveau mot de passe</label>
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control rounded-4" name="passwordConf" id="floatingPasswordConfirmation" placeholder="Mot de passe" required>
+                            <input type="password" class="form-control rounded-4 <%= request.getAttribute("errorPasswordConf") != null ? "is-invalid" : "" %>" 
+                                   name="passwordConf" id="floatingPasswordConfirmation" placeholder="Mot de passe" required>
                             <label for="floatingPasswordConfirmation">Confirmer le mot de passe</label>
+                            <div class="invalid-feedback">
+                                <%= request.getAttribute("errorPasswordConf") != null ? request.getAttribute("errorPasswordConf") : "" %>
+                            </div>
                         </div>
-                        
+
                         <input type="hidden" value="<%= user.getId()%>" name="id">
                         <button class="w-100 btn btn-success btn-lg mt-4" type="submit">Valider</button>
                     </form>
@@ -407,15 +415,17 @@
                             <label for="selectSalleCulture" class="form-label">Salle de culture</label>
                             <select id="selectSalleCulture" class="form-select" name="salleCulture">
                             <%  
-                                List<SalleCulture> listSalleCulture =(List<SalleCulture>) request.getAttribute("listSalleCulture");
-                                for (SalleCulture sc : listSalleCulture) {
-                            %>
+                                List<SalleCulture> listSalleCulture = (List<SalleCulture>) request.getAttribute("listSalleCulture");
+                                if (listSalleCulture.isEmpty()) { %>
+                                <option value="" selected="" disabled>Vide</option>
+                            <% } else {
+                                for (SalleCulture sc : listSalleCulture) { %>
                                 <option value="<%= sc.getId() %>"><%= sc.getNom() %></option>
-                            <% } %>
+                            <% } } %>
                             </select>
                         </div>
-                        
-                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
+
+                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit" <%= listSalleCulture.isEmpty() ? "disabled" : "" %>>Valider</button>
                     </form>
                 <% } %>
 
@@ -434,10 +444,11 @@
                           </tr>
                         </thead>
                         <tbody>
-                            <%  
-                                List<Plante> listPlante =(List<Plante>) request.getAttribute("listPlante");
-                                for (Plante p : listPlante) {
-                            %>
+                            <%  List<Plante> listPlante =(List<Plante>) request.getAttribute("listPlante");
+                                if(listPlante.isEmpty()){ %>
+                                <tr><td colspan="5" class="text-center">Vide</td></tr>
+                                <% } else {
+                                    for (Plante p : listPlante) { %>
                                 <tr>
                                 <th scope="row"><%= p.getId()%></th>
                                 <td><%= p.getEspece() %></td>
@@ -448,7 +459,7 @@
                                     <a class="btn btn-danger" href="PlanteServelet?action=remove&id=<%= p.getId()%>">remove</a>
                                 </td>
                             </tr>  
-                            <% } %>
+                            <% } } %>
                         </tbody>
                       </table>
 
@@ -494,20 +505,22 @@
                         </thead>
                         <tbody>
                             <%  
-                                List<SalleCulture> listSalleCulture =(List<SalleCulture>) request.getAttribute("listSalleCulture");
-                                for (SalleCulture s : listSalleCulture) {
-                            %>
+                                List<SalleCulture> listSalleCulture = (List<SalleCulture>) request.getAttribute("listSalleCulture");
+                                if (listSalleCulture.isEmpty()) { %>
+                                <tr><td colspan="5" class="text-center">Vide</td></tr>
+                            <% } else {
+                                for (SalleCulture s : listSalleCulture) { %>
                                 <tr>
-                                <th scope="row"><%= s.getId()%></th>
-                                <td><%= s.getNom()%></td>
-                                <td><%= s.getTemperature()%></td>
-                                <td><%= s.getHumidite()%></td>
-                                <td>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditSalleCulture" onclick="editSalleCulture(this)" >edit</button>
-                                    <a class="btn btn-danger" href="SalleCultureServelet?action=remove&id=<%= s.getId()%>">remove</a>
-                                </td>
-                            </tr>  
-                            <% } %>
+                                    <th scope="row"><%= s.getId() %></th>
+                                    <td><%= s.getNom() %></td>
+                                    <td><%= s.getTemperature() %></td>
+                                    <td><%= s.getHumidite() %></td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditSalleCulture" onclick="editSalleCulture(this)">edit</button>
+                                        <a class="btn btn-danger" href="SalleCultureServelet?action=remove&id=<%= s.getId() %>">remove</a>
+                                    </td>
+                                </tr>
+                            <% } } %>
                         </tbody>
                       </table>
                 <% } %>
@@ -517,37 +530,39 @@
                 <script>showCollapse("journalCulture-collapse");</script>
 
                 <h3 class="mb-5">Ajouter journal de culture</h3>
-                    
-                    <form id="formJournalCulture" method="post" action="JournalCultureServelet?action=create">
-                        <div class="form-floating mb-3">
-                            <input type="date" class="form-control rounded-4" name="date" id="floatingDate" placeholder="Date" required>
-                            <label for="floatingDate">Date</label>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="selectPlante" class="form-label">Plante</label>
-                            <select id="selectPlante" class="form-select" name="plante">
-                            <%  
-                                List<Plante> listPlante =(List<Plante>) request.getAttribute("listPlante");
-                                for (Plante p : listPlante) {
-                            %>
-                                <option value="<%= p.getId() %>"> <%= p.toString() %> </option>
-                            <% } %>
-                            </select>
-                        </div>
+                
+                <form id="formJournalCulture" method="post" action="JournalCultureServelet?action=create">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control rounded-4" name="date" id="floatingDate" placeholder="Date" required>
+                        <label for="floatingDate">Date</label>
+                    </div>
 
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control rounded-4" name="etapeCroissance" id="floatingEtapeCroissance" placeholder="étape de croissance" required>
-                            <label for="floatingEtapeCroissance">étape de croissance</label>
-                        </div>
-                            
-                        <div class=" mb-3">
-                            <label for="floatingNotes">Notes</label>
-                            <textarea class="form-control rounded-4" id="floatingNotes" name="notes" placeholder="Notes" rows="3"></textarea>
-                        </div>
-                        
-                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
-                    </form>
+                    <div class="mb-3">
+                        <label for="selectPlante" class="form-label">Plante</label>
+                        <select id="selectPlante" class="form-select" name="plante">
+                        <%  
+                            List<Plante> listPlante = (List<Plante>) request.getAttribute("listPlante");
+                            if (listPlante.isEmpty()) { %>
+                            <option value="" selected="" disabled>Vide</option>
+                        <% } else {
+                            for (Plante p : listPlante) { %>
+                            <option value="<%= p.getId() %>"><%= p.toString() %></option>
+                        <% } } %>
+                        </select>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control rounded-4" name="etapeCroissance" id="floatingEtapeCroissance" placeholder="étape de croissance" required>
+                        <label for="floatingEtapeCroissance">étape de croissance</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="floatingNotes">Notes</label>
+                        <textarea class="form-control rounded-4" id="floatingNotes" name="notes" placeholder="Notes" rows="3"></textarea>
+                    </div>
+
+                    <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit" <%= listPlante.isEmpty() ? "disabled" : "" %>>Valider</button>
+                </form>
                 <% } %>
 
                 <% if(request.getParameter("listJournalCulture") != null){ %>
@@ -567,21 +582,23 @@
                         </thead>
                         <tbody>
                             <%  
-                                List<JournalCulture> listJournalCulture =(List<JournalCulture>) request.getAttribute("listJournalCulture");
-                                for (JournalCulture jc : listJournalCulture) {
-                            %>
+                                List<JournalCulture> listJournalCulture = (List<JournalCulture>) request.getAttribute("listJournalCulture");
+                                if (listJournalCulture.isEmpty()) { %>
+                                <tr><td colspan="6" class="text-center">Vide</td></tr>
+                            <% } else {
+                                for (JournalCulture jc : listJournalCulture) { %>
                                 <tr>
-                                <th scope="row"><%= jc.getId()%></th>
-                                <td><%= jc.getDate() %></td>
-                                <td><%= jc.getPlante().toString() %> <span hidden="" ><%= jc.getPlante().getId() %></span> </td>
-                                <td><%= jc.getEtapeCroissance() %> </td>
-                                <td><%= jc.getNotes() %> </td>
-                                <td>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditJournalCulture" onclick="editJournalCulture(this)" >edit</button>
-                                    <a class="btn btn-danger" href="JournalCultureServelet?action=remove&id=<%= jc.getId() %>">remove</a>
-                                </td>
-                            </tr>  
-                            <% } %>
+                                    <th scope="row"><%= jc.getId() %></th>
+                                    <td><%= jc.getDate() %></td>
+                                    <td><%= jc.getPlante().toString() %> <span hidden=""><%= jc.getPlante().getId() %></span></td>
+                                    <td><%= jc.getEtapeCroissance() %></td>
+                                    <td><%= jc.getNotes() %></td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditJournalCulture" onclick="editJournalCulture(this)">edit</button>
+                                        <a class="btn btn-danger" href="JournalCultureServelet?action=remove&id=<%= jc.getId() %>">remove</a>
+                                    </td>
+                                </tr>  
+                            <% } } %>
                         </tbody>
                       </table>
                 <% } %>
@@ -596,30 +613,32 @@
                             <input type="date" class="form-control rounded-4" name="date" id="floatingDate" placeholder="Date" required>
                             <label for="floatingDate">Date</label>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="selectPlante" class="form-label">Plante</label>
                             <select id="selectPlante" class="form-select" name="plante">
                             <%  
-                                List<Plante> listPlante =(List<Plante>) request.getAttribute("listPlante");
-                                for (Plante p : listPlante) {
-                            %>
-                                <option value="<%= p.getId() %>"> <%= p.toString() %> </option>
-                            <% } %>
+                                List<Plante> listPlante = (List<Plante>) request.getAttribute("listPlante");
+                                if (listPlante.isEmpty()) { %>
+                                <option value="" selected="" disabled>Vide</option>
+                            <% } else {
+                                for (Plante p : listPlante) { %>
+                                <option value="<%= p.getId() %>"><%= p.toString() %></option>
+                            <% } } %>
                             </select>
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control rounded-4" name="rendement" id="floatingRendement" placeholder="Redement en gramme" required>
-                            <label for="floatingRendement">Redement en gramme</label>
+                            <input type="number" class="form-control rounded-4" name="rendement" id="floatingRendement" placeholder="Rendement en gramme" required>
+                            <label for="floatingRendement">Rendement en gramme</label>
                         </div>
-                        
+
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control rounded-4" name="qualite" id="floatingQualite" placeholder="Qualité" required>
                             <label for="floatingQualite">Qualité</label>
                         </div>
-                        
-                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit">Valider</button>
+
+                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-success" type="submit" <%= listPlante.isEmpty() ? "disabled" : "" %>>Valider</button>
                     </form>
                 <% } %>
                 <% if(request.getParameter("listRecolte") != null){ %>
@@ -639,21 +658,23 @@
                         </thead>
                         <tbody>
                             <%  
-                                List<Recolte> listRecolte =(List<Recolte>) request.getAttribute("listRecolte");
-                                for (Recolte r : listRecolte) {
-                            %>
+                                List<Recolte> listRecolte = (List<Recolte>) request.getAttribute("listRecolte");
+                                if (listRecolte.isEmpty()) { %>
+                                <tr><td colspan="6" class="text-center">Vide</td></tr>
+                            <% } else {
+                                for (Recolte r : listRecolte) { %>
                                 <tr>
-                                <th scope="row"><%= r.getId()%></th>
-                                <td><%= r.getDate() %></td>
-                                <td><%= r.getPlante().toString() %> <span hidden="" ><%= r.getPlante().getId() %></span> </td>
-                                <td><%= r.getRendement() %> </td>
-                                <td><%= r.getQualite() %> </td>
-                                <td>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditRecolte" onclick="editRecolte(this)" >edit</button>
-                                    <a class="btn btn-danger" href="RecolteServelet?action=remove&id=<%= r.getId() %>">remove</a>
-                                </td>
-                            </tr>  
-                            <% } %>
+                                    <th scope="row"><%= r.getId() %></th>
+                                    <td><%= r.getDate() %></td>
+                                    <td><%= r.getPlante().toString() %> <span hidden=""><%= r.getPlante().getId() %></span></td>
+                                    <td><%= r.getRendement() %></td>
+                                    <td><%= r.getQualite() %></td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditRecolte" onclick="editRecolte(this)">edit</button>
+                                        <a class="btn btn-danger" href="RecolteServelet?action=remove&id=<%= r.getId() %>">remove</a>
+                                    </td>
+                                </tr>
+                            <% } } %>
                         </tbody>
                       </table>
                 <% } %>

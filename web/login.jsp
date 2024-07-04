@@ -29,7 +29,7 @@
                 inpPseudo.className = 'form-control rounded-4';
             }
             else {
-                alert('<%= error%>','danger');
+                alert("<%= error%>",'danger');
             }
         };
     </script>

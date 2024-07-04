@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import org.mindrot.jbcrypt.BCrypt;
 /**
  *
  * @author PC
@@ -193,7 +194,7 @@ public class Utilisateur {
             prs.setString(2, user.getPrenom());
             prs.setString(3, user.getPseudo());
             prs.setString(4, user.getEmail());
-            prs.setString(5, user.getPassword());
+            prs.setString(5, BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
             prs.executeUpdate();
             
             con.commit();
@@ -275,7 +276,7 @@ public class Utilisateur {
             //traitement
             String query = "UPDATE utilisateur SET password = ? WHERE utilisateur_id = ?";
             prs = con.prepareStatement(query);
-            prs.setString(1, newPassword);
+            prs.setString(1, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
             prs.setString(2, this.id);
             prs.executeUpdate();
             
@@ -399,7 +400,7 @@ public class Utilisateur {
             res = prs.executeQuery();
             
             if(res.next()){
-                if(res.getString("password").equals(password)){
+                if(BCrypt.checkpw(password, res.getString("password"))){
                     response = true;
                 }else {
                     throw new Exception("auth_2");

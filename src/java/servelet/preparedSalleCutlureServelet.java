@@ -88,7 +88,7 @@ public class preparedSalleCutlureServelet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+ 
         String action = request.getParameter("action");
         if (!action.isEmpty() || action == null || action == "") {
             SalleCulture salle = new SalleCulture();
