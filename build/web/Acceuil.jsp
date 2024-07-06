@@ -49,6 +49,7 @@
     <link href="inc/css/sidebars.css" rel="stylesheet">
     <link rel="stylesheet" href="bootstrap-icons/font/bootstrap-icons.css">
     <script src="inc/js/function.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -302,6 +303,10 @@
                   <li><a href="UtilisateurServelet?action=logout" class="link-dark rounded text-danger">Deconnexion</a></li>
                 </ul>
               </div>
+            </li>
+            <li class="border-top my-3"></li>
+            <li class="mb-1 d-flex justify-content-center">
+               <a class="btn btn-success" href="DashboardServlet">Dashboard</a>
             </li>
           </ul>
         </div>
@@ -677,6 +682,156 @@
                             <% } } %>
                         </tbody>
                       </table>
+                <% } %>
+                
+                <% if(request.getParameter("dashboard") != null){ 
+                    List<SalleCulture> salles = (List<SalleCulture>) request.getAttribute("salles");
+                    List<Plante> plantes = (List<Plante>) request.getAttribute("plantes");
+                    List<JournalCulture> journaux = (List<JournalCulture>) request.getAttribute("journaux");
+                    List<Recolte> recoltes = (List<Recolte>) request.getAttribute("recoltes");
+                %>
+                <h2 class="my-5 text-center">Température et Humidité des Salles</h2>
+                <canvas id="salleChart"></canvas>
+                <script>
+                    var ctx = document.getElementById('salleChart').getContext('2d');
+                    var salleChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: <%= request.getAttribute("salleNoms") %>,
+                            datasets: [
+                                {
+                                    label: 'Température',
+                                    data: <%= request.getAttribute("salleTemp") %>,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Humidité',
+                                    data: <%= request.getAttribute("salleHumid") %>,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                </script>
+                <div class="border-top border-3 my-5"></div>
+                <h2 class="my-5 text-center">Rendement des Récoltes</h2>
+                <canvas id="recolteChart"></canvas>
+                <script>
+                    var ctx2 = document.getElementById('recolteChart').getContext('2d');
+                    var recolteChart = new Chart(ctx2, {
+                        type: 'line',
+                        data: {
+                            labels: <%= request.getAttribute("recolteDates") %>,
+                            datasets: [{
+                                label: 'Rendement',
+                                data: <%= request.getAttribute("recolteRendements") %>,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                </script>
+                <div class="border-top border-3 my-5"></div>
+                <h2 class="my-5 text-center">Salles de Culture</h2>
+                <p>Nombre de salles de culture : <%= salles.size() %></p>
+                <table class="table table-striped table-sm">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Température</th>
+                        <th>Humidité</th>
+                    </tr>
+                    <%
+                        for (SalleCulture salle : salles) {
+                    %>
+                    <tr>
+                        <td><%= salle.getNom() %></td>
+                        <td><%= salle.getTemperature() %></td>
+                        <td><%= salle.getHumidite() %></td>
+                    </tr>
+                    <%
+                        }
+                    %>
+                </table>
+                <div class="border-top border-3 my-5"></div>
+                <h2 class="my-5 text-center">Plantes</h2>
+                <p>Nombre de plantes : <%= plantes.size() %></p>
+                <table class="table table-striped table-sm">
+                    <tr>
+                        <th>Espèce</th>
+                        <th>Variété</th>
+                    </tr>
+                    <%
+                        for (Plante plante : plantes) {
+                    %>
+                    <tr>
+                        <td><%= plante.getEspece() %></td>
+                        <td><%= plante.getVariete() %></td>
+                    </tr>
+                    <%
+                        }
+                    %>
+                </table>
+                <div class="border-top border-3 my-5"></div>
+                <h2 class="my-5 text-center">Journal de Culture</h2>
+                <p>Nombre d'entrées de journal de culture : <%= journaux.size() %></p>
+                <table class="table table-striped table-sm">
+                    <tr>
+                        <th>Date</th>
+                        <th>Étape de Croissance</th>
+                        <th>Notes</th>
+                    </tr>
+                    <%
+                        for (JournalCulture journal : journaux) {
+                    %>
+                    <tr>
+                        <td><%= journal.getDate() %></td>
+                        <td><%= journal.getEtapeCroissance() %></td>
+                        <td><%= journal.getNotes() %></td>
+                    </tr>
+                    <%
+                        }
+                    %>
+                </table>
+                <div class="border-top border-3 my-5"></div>
+                <h2 class="my-5 text-center">Récoltes</h2>
+                <p>Nombre de récoltes : <%= recoltes.size() %></p>
+                <table class="table table-striped table-sm">
+                    <tr>
+                        <th>Date</th>
+                        <th>Rendement</th>
+                        <th>Qualité</th>
+                    </tr>
+                    <%
+                        for (Recolte recolte : recoltes) {
+                    %>
+                    <tr>
+                        <td><%= recolte.getDate() %></td>
+                        <td><%= recolte.getRendement() %></td>
+                        <td><%= recolte.getQualite() %></td>
+                    </tr>
+                    <%
+                        }
+                    %>
+                </table>
                 <% } %>
             </div>
         </div>

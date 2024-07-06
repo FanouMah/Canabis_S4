@@ -36,6 +36,10 @@
         <servlet-name>RecolteServelet</servlet-name>
         <servlet-class>servelet.RecolteServelet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DashboardServlet</servlet-name>
+        <servlet-class>servelet.DashboardServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UtilisateurServelet</servlet-name>
         <url-pattern>/UtilisateurServelet</url-pattern>
@@ -71,6 +75,10 @@
     <servlet-mapping>
         <servlet-name>RecolteServelet</servlet-name>
         <url-pattern>/RecolteServelet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DashboardServlet</servlet-name>
+        <url-pattern>/DashboardServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
