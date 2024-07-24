@@ -278,4 +278,73 @@ public class Plante {
         }
         return list;
     }
+    
+    public List<Plante> search(String espece, String variete, String salleCultureId) throws Exception {
+    Connection con = null;
+    PreparedStatement prs = null;
+    ResultSet res = null;
+    List<Plante> list = new ArrayList<>();
+    
+    try {
+        if (con == null) {
+            Database pg = new Database("postgresql");
+            pg.openConnection("postgres", "admin", "cannabis");
+            con = pg.getConnection();
+            con.setAutoCommit(false);
+        }
+        
+        // Construire la requête SQL dynamique
+        StringBuilder query = new StringBuilder("SELECT * FROM plante WHERE 1=1");
+        if (espece != null && !espece.isEmpty()) {
+            query.append(" AND espece LIKE ?");
+        }
+        if (variete != null && !variete.isEmpty()) {
+            query.append(" AND variete LIKE ?");
+        }
+        if (salleCultureId != null && !salleCultureId.isEmpty()) {
+            query.append(" AND salleCulture_id = ?");
+        }
+        query.append(" ORDER BY CAST(substring(plante_id from 3) AS INTEGER)");
+        
+        prs = con.prepareStatement(query.toString());
+        
+        // Définir les paramètres
+        int paramIndex = 1;
+        if (espece != null && !espece.isEmpty()) {
+            prs.setString(paramIndex++, "%" + espece + "%");
+        }
+        if (variete != null && !variete.isEmpty()) {
+            prs.setString(paramIndex++, "%" + variete + "%");
+        }
+        if (salleCultureId != null && !salleCultureId.isEmpty()) {
+            prs.setString(paramIndex++, salleCultureId);
+        }
+        
+        res = prs.executeQuery();
+        while (res.next()) {
+            SalleCulture s = new SalleCulture();
+            s.getById(res.getString("salleCulture_id"));
+            list.add(new Plante(res.getString("plante_id"), res.getString("espece"), res.getString("variete"), s));
+        }
+        
+        con.commit();
+    } catch (Exception e) {
+        if (con != null) {
+            con.rollback();
+        }
+        throw e;
+    } finally {
+        if (con != null) {
+            con.close();
+        }
+        if (prs != null) {
+            prs.close();
+        }
+        if (res != null) {
+            res.close();
+        }
+    }
+    return list;
+}
+
 }

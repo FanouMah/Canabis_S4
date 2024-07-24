@@ -65,6 +65,95 @@ public class SalleCulture {
         this.humidite = humidite;
     }
     
+    public List<SalleCulture> search(String nom, Integer tempMin, Integer tempMax, Integer humMin, Integer humMax) throws Exception {
+        Connection con = null;
+        PreparedStatement prs = null;
+        ResultSet res = null;
+        List<SalleCulture> list = new ArrayList<>();
+
+        try {
+            if (con == null) {
+                Database pg = new Database("postgresql");
+                pg.openConnection("postgres", "admin", "cannabis");
+                con = pg.getConnection();
+                con.setAutoCommit(false);
+            }
+
+            // Construire la requête SQL
+            String query = "SELECT * FROM salleCulture WHERE 1=1";
+
+            if (nom != null && !nom.isEmpty()) {
+                query += " AND LOWER(nom_salle) LIKE ?";
+            }
+
+            if (tempMin != null) {
+                query += " AND temperature >= ?";
+            }
+
+            if (tempMax != null) {
+                query += " AND temperature <= ?";
+            }
+
+            if (humMin != null) {
+                query += " AND humidite >= ?";
+            }
+
+            if (humMax != null) {
+                query += " AND humidite <= ?";
+            }
+
+            query += " ORDER BY CAST(substring(salleCulture_id from 3) AS INTEGER)";
+
+            prs = con.prepareStatement(query);
+
+            int paramIndex = 1;
+
+            if (nom != null && !nom.isEmpty()) {
+                prs.setString(paramIndex++, "%" + nom.toLowerCase() + "%");
+            }
+
+            if (tempMin != null) {
+                prs.setInt(paramIndex++, tempMin);
+            }
+
+            if (tempMax != null) {
+                prs.setInt(paramIndex++, tempMax);
+            }
+
+            if (humMin != null) {
+                prs.setInt(paramIndex++, humMin);
+            }
+
+            if (humMax != null) {
+                prs.setInt(paramIndex++, humMax);
+            }
+            
+            res = prs.executeQuery();
+            while (res.next()) {
+                list.add(new SalleCulture(res.getString("salleCulture_id"), res.getString("nom_salle"), res.getInt("temperature"), res.getInt("humidite")));
+            }
+
+            con.commit();
+        } catch (Exception e) {
+            if (con != null) {
+                con.rollback();   
+            }
+            throw e;
+        } finally {
+            if (con != null) {
+                con.close();
+            }
+            if (prs != null) {
+                prs.close();
+            }
+            if (res != null) {
+                res.close();
+            }
+        }
+        return list;
+    }
+
+    
     public void getById(String id) throws Exception{
             Connection con = null;
             PreparedStatement prs = null;
@@ -81,6 +170,7 @@ public class SalleCulture {
             String query = "SELECT * FROM salleCulture where salleCulture_id = ?";
             prs = con.prepareStatement(query);
             prs.setString(1, id);
+            
             res = prs.executeQuery();
             
             if(res.next()){
@@ -244,54 +334,6 @@ public class SalleCulture {
             }
             //traitement
             String query = "SELECT * FROM salleCulture order by CAST(substring(salleCulture_id from 3) AS INTEGER)";
-            prs = con.prepareStatement(query);
-            res = prs.executeQuery();
-            while (res.next()) {
-                list.add(new SalleCulture(res.getString("salleCulture_id"), res.getString("nom_salle"), res.getInt("temperature"), res.getInt("humidite")));
-            }
-            
-            con.commit();
-        } catch (Exception e) {
-            if (con != null) {
-                con.rollback();   
-            }
-            throw e;
-        }
-        finally{
-            if (con != null) {
-                con.close();
-            }
-            if (prs != null) {
-                prs.close();
-            }
-            if (res != null){
-                res.close();
-            }
-        }
-        return list;
-    }
-    
-    public List<SalleCulture> search(String nom,int tempMin,int tempMax,int humMin,int humMax) throws Exception{
-    Connection con = null;
-        PreparedStatement prs = null;
-        ResultSet res = null;
-        List<SalleCulture> list = new ArrayList<>();
-        
-        try {
-            if(con == null){
-                Database pg = new Database("postgresql");
-                pg.openConnection("postgres", "admin", "cannabis");
-                con = pg.getConnection();
-                con.setAutoCommit(false);
-            }
-            //traitement
-            String query = "SELECT * FROM salleCulture where ";
-            
-            if (!nom.isEmpty()) {
-                query += "and LOWER(nom_salle) like '%?%' ";
-            }
-            
-            query += "order by CAST(substring(salleCulture_id from 3) AS INTEGER)";
             prs = con.prepareStatement(query);
             res = prs.executeQuery();
             while (res.next()) {

@@ -5,13 +5,16 @@
  */
 package servelet;
 
+import classes.JournalCulture;
 import classes.Plante;
 import classes.Recolte;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -94,9 +97,39 @@ public class RecolteServelet extends HttpServlet {
                 case  "update":
                     updateRecolte(request, response);
                     break;
+                case "search":
+                    searchRecolte(request, response);
+                    break;
             }
         }
     }
+    
+    protected void searchRecolte(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+            Date dateDebut = request.getParameter("dateDebut").isEmpty() ? null : Function.stringToDate(request.getParameter("dateDebut"));
+            Date dateFin = request.getParameter("dateFin").isEmpty() ? null : Function.stringToDate(request.getParameter("dateFin"));
+            String idPlante = request.getParameter("plante");
+            Integer rendMin = request.getParameter("rendMin").isEmpty() ? null : Integer.parseInt(request.getParameter("rendMin"));
+            Integer rendMax = request.getParameter("rendMax").isEmpty() ? null : Integer.parseInt(request.getParameter("rendMax"));
+            String qualite = request.getParameter("qualite");
+           
+            Recolte recolte = new Recolte();
+            Plante plante = new Plante();
+
+            try {
+                
+                List<Plante> listPlante  = plante.getAll();
+                List<Recolte> results = recolte.search(dateDebut, dateFin, idPlante, rendMin, rendMax, qualite);
+                
+                request.setAttribute("listPlante", listPlante);
+                request.setAttribute("listRecolte", results);
+                RequestDispatcher dispat =  request.getRequestDispatcher("Acceuil.jsp?listRecolte");
+                dispat.forward(request, response);
+            } catch (Exception e) {
+                request.setAttribute("error", e.getMessage());
+                    request.getRequestDispatcher("Acceuil.jsp").forward(request, response);
+            }
+        }
     
     protected void removeRecolte(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

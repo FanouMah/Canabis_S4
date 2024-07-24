@@ -7,11 +7,14 @@ package servelet;
 
 import classes.JournalCulture;
 import classes.Plante;
+import classes.SalleCulture;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -94,9 +97,38 @@ public class JournalCultureServelet extends HttpServlet {
                 case  "update":
                     updateJournalCulture(request, response);
                     break;
+                case "search":
+                    searchJournalCulture(request, response);
+                    break;
             }
         }
     }
+    
+        protected void searchJournalCulture(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+            Date dateDebut = request.getParameter("dateDebut").isEmpty() ? null : Function.stringToDate(request.getParameter("dateDebut"));
+            Date dateFin = request.getParameter("dateFin").isEmpty() ? null : Function.stringToDate(request.getParameter("dateFin"));
+            String idPlante = request.getParameter("plante");
+            String etapeCroissance = request.getParameter("etapeCroissance");
+            String notes = request.getParameter("notes");
+           
+            JournalCulture journal = new JournalCulture();
+            Plante plante = new Plante();
+
+            try {
+                
+                List<Plante> listPlante  = plante.getAll();
+                List<JournalCulture> results = journal.search(dateDebut, dateFin, idPlante, etapeCroissance, notes);
+                
+                request.setAttribute("listPlante", listPlante);
+                request.setAttribute("listJournalCulture", results);
+                RequestDispatcher dispat =  request.getRequestDispatcher("Acceuil.jsp?listJournalCulture");
+                dispat.forward(request, response);
+            } catch (Exception e) {
+                request.setAttribute("error", e.getMessage());
+                    request.getRequestDispatcher("Acceuil.jsp").forward(request, response);
+            }
+        }
     
     protected void removeJournalCulture(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -10,6 +10,8 @@
 
 create database cannabis;
 
+\c cannabis
+
 create sequence seq_utilisateur;
 create table utilisateur(
     utilisateur_id VARCHAR(20) DEFAULT concat('USER' || nextval('seq_utilisateur')) PRIMARY KEY,
@@ -19,12 +21,6 @@ create table utilisateur(
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
-
-select utilisateur_id from utilisateur where pseudo = ?;
-SELECT * FROM utilisateur where utilisateur_id = ?;
-INSERT INTO utilisateur (nom,prenom,pseudo,email,password) VALUES (?;?,?,?,?);
-UPDATE utilisateur SET nom = ?, prenom = ?, pseudo = ?, email = ? WHERE utilisateur_id = ?;
-DELETE FROM utilisateur WHERE utilisateur_id = ?;
 
 create sequence seq_salleCulture;
 create table salleCulture(
@@ -39,13 +35,13 @@ create table plante (
     plante_id VARCHAR(20) DEFAULT concat('PL' || nextval('seq_plante')) PRIMARY KEY,
     espece VARCHAR(255) NOT NULL,
     variete VARCHAR(255) NOT NULL,
-    salleCulture_id VARCHAR(20) REFERENCES salleCulture(salleCulture_id)
+    salleCulture_id VARCHAR(20) REFERENCES salleCulture(salleCulture_id) ON DELETE CASCADE
 );
 
 create sequence seq_journalCulture;
 create table journalCulture (
     journalCulture_id VARCHAR(20) DEFAULT concat('JC' || nextval('seq_journalCulture')) PRIMARY KEY,
-    plante_id VARCHAR(20) REFERENCES plante(plante_id),
+    plante_id VARCHAR(20) REFERENCES plante(plante_id) ON DELETE CASCADE,
     date DATE NOT NULL,
     etapeCroissance VARCHAR(255) NOT NULL, 
     notes TEXT
@@ -54,8 +50,14 @@ create table journalCulture (
 create sequence seq_recolte;
 create table recolte (
     recolte_id VARCHAR(20) DEFAULT concat('RC' || nextval('seq_recolte')) PRIMARY KEY,
-    plante_id VARCHAR(20) REFERENCES plante(plante_id),
+    plante_id VARCHAR(20) REFERENCES plante(plante_id) ON DELETE CASCADE,
     date DATE NOT NULL,
     rendement INT NOT NULL, 
     qualite VARCHAR(255) NOT NULL
 );
+
+select utilisateur_id from utilisateur where pseudo = ?;
+SELECT * FROM utilisateur where utilisateur_id = ?;
+INSERT INTO utilisateur (nom,prenom,pseudo,email,password) VALUES (?;?,?,?,?);
+UPDATE utilisateur SET nom = ?, prenom = ?, pseudo = ?, email = ? WHERE utilisateur_id = ?;
+DELETE FROM utilisateur WHERE utilisateur_id = ?;

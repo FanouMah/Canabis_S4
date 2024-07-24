@@ -76,6 +76,98 @@ public class Recolte {
         this.qualite = qualite;
     }
     
+    public int getNombrePlantesRecoltees() throws Exception {
+        Connection con = null;
+        PreparedStatement prs = null;
+        ResultSet res = null;
+        int count = 0;
+
+        try {
+            if(con == null){
+                Database pg = new Database("postgresql");
+                pg.openConnection("postgres", "admin", "cannabis");
+                con = pg.getConnection();
+                con.setAutoCommit(false);
+            }
+
+            String query = "SELECT COUNT(DISTINCT p.plante_id) AS nombre_plantes_recoltees " +
+                           "FROM plante p " +
+                           "JOIN recolte r ON p.plante_id = r.plante_id";
+            prs = con.prepareStatement(query);
+            res = prs.executeQuery();
+
+            if (res.next()) {
+                count = res.getInt("nombre_plantes_recoltees");
+            }
+
+            con.commit();
+        } catch (SQLException e) {
+            if (con != null) {
+                con.rollback();
+            }
+            throw e;
+        } finally {
+            if (con != null) {
+                con.close();
+            }
+            if (prs != null) {
+                prs.close();
+            }
+            if (res != null) {
+                res.close();
+            }
+        }
+
+        return count;
+    }
+
+    public int getNombrePlantesNonRecoltees() throws Exception {
+        Connection con = null;
+        PreparedStatement prs = null;
+        ResultSet res = null;
+        int count = 0;
+
+        try {
+           if(con == null){
+                Database pg = new Database("postgresql");
+                pg.openConnection("postgres", "admin", "cannabis");
+                con = pg.getConnection();
+                con.setAutoCommit(false);
+            }
+
+            String query = "SELECT COUNT(p.plante_id) AS nombre_plantes_non_recoltees " +
+                           "FROM plante p " +
+                           "LEFT JOIN recolte r ON p.plante_id = r.plante_id " +
+                           "WHERE r.plante_id IS NULL";
+            prs = con.prepareStatement(query);
+            res = prs.executeQuery();
+
+            if (res.next()) {
+                count = res.getInt("nombre_plantes_non_recoltees");
+            }
+
+            con.commit();
+        } catch (SQLException e) {
+            if (con != null) {
+                con.rollback();
+            }
+            throw e;
+        } finally {
+            if (con != null) {
+                con.close();
+            }
+            if (prs != null) {
+                prs.close();
+            }
+            if (res != null) {
+                res.close();
+            }
+        }
+
+        return count;
+    }
+
+    
     public void getById(String id) throws Exception{
             Connection con = null;
             PreparedStatement prs = null;
@@ -120,6 +212,106 @@ public class Recolte {
                 res.close();
             }
         }
+    }
+    
+    public List<Recolte> search(Date dateDebut, Date dateFin, String planteId, Integer rendMin, Integer rendMax, String qualite) throws Exception {
+        Connection con = null;
+        PreparedStatement prs = null;
+        ResultSet res = null;
+        List<Recolte> list = new ArrayList<>();
+
+        try {
+            if (con == null) {
+                Database pg = new Database("postgresql");
+                pg.openConnection("postgres", "admin", "cannabis");
+                con = pg.getConnection();
+                con.setAutoCommit(false);
+            }
+
+            // Construire la requête SQL
+            String query = "SELECT * FROM recolte WHERE 1=1";
+
+            if (dateDebut != null) {
+                query += " AND date >= ?";
+            }
+
+            if (dateFin != null) {
+                query += " AND date <= ?";
+            }
+            
+             if (planteId != null && !planteId.isEmpty()) {
+                query += " AND plante_id = ?";
+            }
+             
+ 
+            if (rendMin != null) {
+                query += " AND rendement >= ?";
+            }
+
+            if (rendMax != null) {
+                query += " AND rendement <= ?";
+            }
+            
+            if (qualite != null && !qualite.isEmpty()) {
+                query += " AND LOWER(qualite) LIKE ?";
+            }
+
+            query += " ORDER BY CAST(substring(recolte_id from 3) AS INTEGER)";
+
+            prs = con.prepareStatement(query);
+
+            int paramIndex = 1;
+            
+            if (dateDebut != null) {
+                prs.setDate(paramIndex++, dateDebut);
+            }
+
+            if (dateFin != null) {
+                prs.setDate(paramIndex++, dateFin);
+            }
+  
+            if (planteId != null && !planteId.isEmpty()) {
+                prs.setString(paramIndex++, planteId);
+            }
+                      
+            if (rendMin != null) {
+                prs.setInt(paramIndex++, rendMin);
+            }
+
+            if (rendMax != null) {
+                prs.setInt(paramIndex++, rendMax);
+            }
+            
+            if (qualite != null && !qualite.isEmpty()) {
+                prs.setString(paramIndex++, "%" + qualite.toLowerCase() + "%");
+            }
+            
+            System.out.println(prs);
+            res = prs.executeQuery();
+            while (res.next()) {
+                Plante p = new Plante();
+                p.getById(res.getString("plante_id"));
+                list.add(new Recolte(res.getString("recolte_id"),res.getDate("date"),p,res.getInt("rendement"),res.getString("qualite")));
+            }
+
+            con.commit();
+        } catch (Exception e) {
+            if (con != null) {
+                con.rollback();   
+            }
+            throw e;
+        } finally {
+            if (con != null) {
+                con.close();
+            }
+            if (prs != null) {
+                prs.close();
+            }
+            if (res != null) {
+                res.close();
+            }
+        }
+        return list;
     }
     
     public List<Recolte> getAll() throws Exception{

@@ -243,7 +243,10 @@ public class Utilisateur {
             prs.executeUpdate();
             
             con.commit();
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            if(e.getSQLState().equals("23505")){
+                e = new SQLException("Pseudo deja prise");
+            }
             if (con != null) {
                 con.rollback();   
             }

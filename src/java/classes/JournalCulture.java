@@ -76,6 +76,96 @@ public class JournalCulture {
         this.notes = notes;
     }
     
+     public List<JournalCulture> search(Date dateDebut, Date dateFin, String planteId, String etapeCroissance, String notes) throws Exception {
+        Connection con = null;
+        PreparedStatement prs = null;
+        ResultSet res = null;
+        List<JournalCulture> list = new ArrayList<>();
+
+        try {
+            if (con == null) {
+                Database pg = new Database("postgresql");
+                pg.openConnection("postgres", "admin", "cannabis");
+                con = pg.getConnection();
+                con.setAutoCommit(false);
+            }
+
+            // Construire la requête SQL
+            String query = "SELECT * FROM journalCulture WHERE 1=1";
+
+            if (dateDebut != null) {
+                query += " AND date >= ?";
+            }
+
+            if (dateFin != null) {
+                query += " AND date <= ?";
+            }
+            
+             if (planteId != null && !planteId.isEmpty()) {
+                query += " AND plante_id = ?";
+            }
+             
+            if (etapeCroissance != null && !etapeCroissance.isEmpty()) {
+                query += " AND LOWER(etapecroissance) LIKE ?";
+            }
+            
+            if (notes != null && !notes.isEmpty()) {
+                query += " AND LOWER(notes) LIKE ?";
+            }
+
+            query += " ORDER BY CAST(substring(journalCulture_id from 3) AS INTEGER)";
+
+            prs = con.prepareStatement(query);
+
+            int paramIndex = 1;
+            
+            if (dateDebut != null) {
+                prs.setDate(paramIndex++, dateDebut);
+            }
+
+            if (dateFin != null) {
+                prs.setDate(paramIndex++, dateFin);
+            }
+  
+            if (planteId != null && !planteId.isEmpty()) {
+                prs.setString(paramIndex++, planteId);
+            }
+                      
+            if (etapeCroissance != null && !etapeCroissance.isEmpty()) {
+                prs.setString(paramIndex++, "%" + etapeCroissance.toLowerCase() + "%");
+            }
+            
+            if (notes != null && !notes.isEmpty()) {
+                prs.setString(paramIndex++, "%" + notes.toLowerCase() + "%");
+            }
+            
+            res = prs.executeQuery();
+            while (res.next()) {
+                Plante p = new Plante();
+                p.getById(res.getString("plante_id"));
+                list.add(new JournalCulture(res.getString("journalCulture_id"),res.getDate("date"),p,res.getString("etapecroissance"),res.getString("notes")));
+            }
+
+            con.commit();
+        } catch (Exception e) {
+            if (con != null) {
+                con.rollback();   
+            }
+            throw e;
+        } finally {
+            if (con != null) {
+                con.close();
+            }
+            if (prs != null) {
+                prs.close();
+            }
+            if (res != null) {
+                res.close();
+            }
+        }
+        return list;
+    }
+    
     public void getById(String id) throws Exception{
             Connection con = null;
             PreparedStatement prs = null;
@@ -121,7 +211,7 @@ public class JournalCulture {
             }
         }
     }
-    
+      
     public List<JournalCulture> getAll() throws Exception{
     Connection con = null;
         PreparedStatement prs = null;

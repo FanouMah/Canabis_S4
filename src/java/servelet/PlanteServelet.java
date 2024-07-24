@@ -9,8 +9,10 @@ import classes.Plante;
 import classes.SalleCulture;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -92,9 +94,36 @@ public class PlanteServelet extends HttpServlet {
                 case  "update":
                     updatePlante(request, response);
                     break;
+                case "search":
+                    searchPlante(request, response);
+                    break;
             }
         }
     }
+    
+        protected void searchPlante(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+            String espece = request.getParameter("espece");
+            String variete = request.getParameter("variete");
+            String idSalleCulture = request.getParameter("salleCulture");
+            
+            Plante plante = new Plante();
+            SalleCulture salle = new SalleCulture();
+            
+            try {
+                List<Plante> results = plante.search(espece, variete, idSalleCulture);
+                List<SalleCulture> listSalleCulture  = salle.getAll();
+                
+                request.setAttribute("listPlante", results);
+                request.setAttribute("listSalleCulture", listSalleCulture);
+                
+                RequestDispatcher dispat = request.getRequestDispatcher("Acceuil.jsp?listPlante");
+                dispat.forward(request, response);
+            } catch (Exception e) {
+                request.setAttribute("error", e.getMessage());
+                request.getRequestDispatcher("Acceuil.jsp").forward(request, response);
+            }
+        }
 
     protected void removePlante(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

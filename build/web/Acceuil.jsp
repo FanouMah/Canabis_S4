@@ -43,11 +43,13 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
     <title>Acceuil</title>
     <link href="bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" >
     <link href="inc/css/sidebars.css" rel="stylesheet">
     <link rel="stylesheet" href="bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="inc/js/function.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -397,7 +399,7 @@
                     
                     <hr class="my-4">
                     <h3 class="mb-5">Supprimer votre compte</h3>
-                    <a class="btn btn-danger" href="UtilisateurServelet?action=remove&id=<%= user.getId()%>">Supprimer</a>
+                    <a class="btn btn-danger" href="javascript:void(0);" onclick="confirmDeleteAccount('<%= user.getId() %>')"><i class="bi bi-trash3"></i> Supprimer</a>
                 <% } %>
                 
                 <!-- plantes -->
@@ -436,6 +438,41 @@
 
                 <% if(request.getParameter("listPlante") != null){ %>
                 <script>showCollapse("plantes-collapse");</script>
+                    <div class="container mt-5">
+                        <h2>Recherche Plante</h2>
+                        <form action="PlanteServelet?action=search" method="post">
+                            
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-4" name="espece" id="floatingEspece" placeholder="Espèce">
+                            <label for="floatingEspece">Espèce</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control rounded-4" name="variete" id="floatingVariete" placeholder="Variété">
+                            <label for="floatingVariete">Variété</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="selectSalleCulture" class="form-label">Salle de culture</label>
+                            <select id="selectSalleCulture" class="form-select" name="salleCulture">
+                                <option value="" selected="">Tout</option>
+                            <%  
+                                List<SalleCulture> listSalleCulture = (List<SalleCulture>) request.getAttribute("listSalleCulture");
+                                if (listSalleCulture.isEmpty()) { %>
+                                <option value="" selected="" disabled>Vide</option>
+                            <% } else {
+                                for (SalleCulture sc : listSalleCulture) { %>
+                                <option value="<%= sc.getId() %>"><%= sc.getNom() %></option>
+                            <% } } %>
+                            </select>
+                        </div>
+
+                            <button type="submit" class="btn btn-success"><i class="bi bi-search"></i> Rechercher</button>
+                        </form>
+                    </div>
+                
+                    <div class="border-top border-3 my-5"></div>
+                
                     <h3 class="mb-5">Liste des Plantes</h3>
                     
                     <table class="table">
@@ -460,8 +497,8 @@
                                 <td><%= p.getVariete() %></td>
                                 <td><%= p.getSalleCulture().getNom() %> <span hidden="" ><%= p.getSalleCulture().getId()%></span> </td>
                                 <td>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditPlante" onclick="editPlante(this)" >edit</button>
-                                    <a class="btn btn-danger" href="PlanteServelet?action=remove&id=<%= p.getId()%>">remove</a>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditPlante" onclick="editPlante(this)" ><i class="bi bi-pencil-square"></i></button>
+                                    <a class="btn btn-danger" href="javascript:void(0);" onclick="confirmDeletePlante('<%= p.getId() %>')"><i class="bi bi-trash3"></i></a>
                                 </td>
                             </tr>  
                             <% } } %>
@@ -497,6 +534,48 @@
 
                 <% if(request.getParameter("listSalleCulture") != null){ %>
                 <script>showCollapse("salleCulture-collapse");</script>
+                    <div class="container mt-5">
+                        <h2>Recherche Salle Culture</h2>
+                        <form action="SalleCultureServelet?action=search" method="post">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control rounded-4" name="nom" id="floatingName" placeholder="Nom" >
+                                <label for="floatingName">Nom</label>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-4" name="tempMin" id="floatingTempMin" placeholder="Température Minimum" >
+                                        <label for="floatingTempMin">Température Minimum (°c)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-4" name="tempMax" id="floatingTempMax" placeholder="Température Maximum" >
+                                        <label for="floatingTempMax">Température Maximum (°c)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-4" name="humMin" id="floatingHumMin" placeholder="Humidité Minimum" >
+                                        <label for="floatingHumMin">Humidité Minimum (%)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-4" name="humMax" id="floatingHumMax" placeholder="Humidité Maximum" >
+                                        <label for="floatingHumMax">Humidité Maximum (%)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success"><i class="bi bi-search"></i> Rechercher</button>
+                        </form>
+                    </div>
+                    <div class="border-top border-3 my-5"></div>
                     <h3 class="mb-5">Liste des salles de culture</h3>
                       <table class="table">
                         <thead>
@@ -521,8 +600,8 @@
                                     <td><%= s.getTemperature() %></td>
                                     <td><%= s.getHumidite() %></td>
                                     <td>
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditSalleCulture" onclick="editSalleCulture(this)">edit</button>
-                                        <a class="btn btn-danger" href="SalleCultureServelet?action=remove&id=<%= s.getId() %>">remove</a>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditSalleCulture" onclick="editSalleCulture(this)"><i class="bi bi-pencil-square"></i></button>
+                                        <a class="btn btn-danger" href="javascript:void(0);" onclick="confirmDeleteSalle('<%= s.getId() %>')"><i class="bi bi-trash3"></i></a>
                                     </td>
                                 </tr>
                             <% } } %>
@@ -533,7 +612,7 @@
                 <!-- journalCulture -->
                 <% if(request.getParameter("addJournalCulture") != null){ %>
                 <script>showCollapse("journalCulture-collapse");</script>
-
+                    
                 <h3 class="mb-5">Ajouter journal de culture</h3>
                 
                 <form id="formJournalCulture" method="post" action="JournalCultureServelet?action=create">
@@ -572,6 +651,55 @@
 
                 <% if(request.getParameter("listJournalCulture") != null){ %>
                 <script>showCollapse("journalCulture-collapse");</script>
+                    <div class="container mt-5">
+                        <h2>Recherche Journal de culture</h2>
+                        <form action="JournalCultureServelet?action=search" method="post">
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control rounded-4" name="dateDebut" id="floatingDateDebut" placeholder="Date debut" >
+                                        <label for="floatingDateDebut">Date debut</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control rounded-4" name="dateFin" id="floatingDateFin" placeholder="Date fin" >
+                                        <label for="floatingDateFin">Date fin</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="selectPlante" class="form-label">Plante</label>
+                                <select id="selectPlante" class="form-select" name="plante">
+                                    <option value="" selected="">Tout</option>
+                                <%  
+                                    List<Plante> listPlante = (List<Plante>) request.getAttribute("listPlante");
+                                    if (listPlante.isEmpty()) { %>
+                                    <option value="" selected="" disabled>Vide</option>
+                                <% } else {
+                                    for (Plante p : listPlante) { %>
+                                    <option value="<%= p.getId() %>"><%= p.toString() %></option>
+                                <% } } %>
+                                </select>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control rounded-4" name="etapeCroissance" id="floatingEtapeCroissance" placeholder="étape de croissance" >
+                                <label for="floatingEtapeCroissance">étape de croissance</label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="floatingNotes">Notes</label>
+                                <textarea class="form-control rounded-4" id="floatingNotes" name="notes" placeholder="Notes" rows="3"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-success"><i class="bi bi-search"></i> Rechercher</button>
+                        </form>
+                    </div>
+
+                    <div class="border-top border-3 my-5"></div>
                     <h3 class="mb-5">Journal de culture</h3>
                     
                     <table class="table">
@@ -579,9 +707,9 @@
                           <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Date</th>
-                            <th scope="col">Plante</th>
+                            <th scope="col" class="w-25">Plante</th>
                             <th scope="col">étape de croissance</th>
-                            <th scope="col">Notes</th>
+                            <th scope="col" class="w-25">Notes</th>
                             <th scope="col">Action</th>
                           </tr>
                         </thead>
@@ -599,8 +727,8 @@
                                     <td><%= jc.getEtapeCroissance() %></td>
                                     <td><%= jc.getNotes() %></td>
                                     <td>
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditJournalCulture" onclick="editJournalCulture(this)">edit</button>
-                                        <a class="btn btn-danger" href="JournalCultureServelet?action=remove&id=<%= jc.getId() %>">remove</a>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditJournalCulture" onclick="editJournalCulture(this)"><i class="bi bi-pencil-square"></i></button>
+                                        <a class="btn btn-danger" href="javascript:void(0);" onclick="confirmDeleteJournal('<%= jc.getId() %>')"><i class="bi bi-trash3"></i></a>
                                     </td>
                                 </tr>  
                             <% } } %>
@@ -648,6 +776,65 @@
                 <% } %>
                 <% if(request.getParameter("listRecolte") != null){ %>
                 <script>showCollapse("recolte-collapse");</script>
+                <div class="container mt-5">
+                        <h2>Recherche récolte</h2>
+                        <form action="RecolteServelet?action=search" method="post">
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control rounded-4" name="dateDebut" id="floatingDateDebut" placeholder="Date debut" >
+                                        <label for="floatingDateDebut">Date debut</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control rounded-4" name="dateFin" id="floatingDateFin" placeholder="Date fin" >
+                                        <label for="floatingDateFin">Date fin</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="selectPlante" class="form-label">Plante</label>
+                                <select id="selectPlante" class="form-select" name="plante">
+                                    <option value="" selected="">Tout</option>
+                                <%  
+                                    List<Plante> listPlante = (List<Plante>) request.getAttribute("listPlante");
+                                    if (listPlante.isEmpty()) { %>
+                                    <option value="" selected="" disabled>Vide</option>
+                                <% } else {
+                                    for (Plante p : listPlante) { %>
+                                    <option value="<%= p.getId() %>"><%= p.toString() %></option>
+                                <% } } %>
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-4" name="rendMin" id="floatingRendMin" placeholder="Rendement Minimum (g)" >
+                                        <label for="floatingRendMin">Rendement Minimum (g)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control rounded-4" name="rendMax" id="floatingRendMax" placeholder="Rendement Maximum (g)" >
+                                        <label for="floatingRendMax">Rendement Maximum (g)</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control rounded-4" name="qualite" id="floatingQualite" placeholder="Qualité">
+                                <label for="floatingQualite">Qualité</label>
+                            </div>
+
+                            <button type="submit" class="btn btn-success"><i class="bi bi-search"></i> Rechercher</button>
+                        </form>
+                    </div>
+
+                    <div class="border-top border-3 my-5"></div>
                     <h3 class="mb-5">Liste récolte</h3>
                 
                     <table class="table">
@@ -675,8 +862,8 @@
                                     <td><%= r.getRendement() %></td>
                                     <td><%= r.getQualite() %></td>
                                     <td>
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditRecolte" onclick="editRecolte(this)">edit</button>
-                                        <a class="btn btn-danger" href="RecolteServelet?action=remove&id=<%= r.getId() %>">remove</a>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditRecolte" onclick="editRecolte(this)"><i class="bi bi-pencil-square"></i></button>
+                                        <a class="btn btn-danger" href="javascript:void(0);" onclick="confirmDeleteRecolte('<%= r.getId() %>')"><i class="bi bi-trash3"></i></a>
                                     </td>
                                 </tr>
                             <% } } %>
@@ -685,13 +872,28 @@
                 <% } %>
                 
                 <% if(request.getParameter("dashboard") != null){ 
-                    List<SalleCulture> salles = (List<SalleCulture>) request.getAttribute("salles");
-                    List<Plante> plantes = (List<Plante>) request.getAttribute("plantes");
-                    List<JournalCulture> journaux = (List<JournalCulture>) request.getAttribute("journaux");
-                    List<Recolte> recoltes = (List<Recolte>) request.getAttribute("recoltes");
+                     List<SalleCulture> salles = (List<SalleCulture>) request.getAttribute("salles");
+                     List<Plante> plantes = (List<Plante>) request.getAttribute("plantes");
+                     List<JournalCulture> journaux = (List<JournalCulture>) request.getAttribute("journaux");
+                     List<Recolte> recoltes = (List<Recolte>) request.getAttribute("recoltes");
+                     int plantesRecoltees = (int) request.getAttribute("plantesRecoltees");
+                     int plantesNonRecoltees = (int) request.getAttribute("plantesNonRecoltees");
                 %>
+                <h2 class="my-5 text-center">Statistiques des Récoltes général</h2>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <canvas id="harvestChart" class="w-100"></canvas>
+                        </div>
+                        <div class="col-md-4">
+                            <canvas id="plantChart" class="w-100"></canvas>
+                        </div>
+                    </div>
+                </div>
                 <h2 class="my-5 text-center">Température et Humidité des Salles</h2>
-                <canvas id="salleChart"></canvas>
+                <div class="container">
+                    <canvas id="salleChart"></canvas>
+                </div>
                 <script>
                     var ctx = document.getElementById('salleChart').getContext('2d');
                     var salleChart = new Chart(ctx, {
@@ -700,17 +902,17 @@
                             labels: <%= request.getAttribute("salleNoms") %>,
                             datasets: [
                                 {
-                                    label: 'Température',
+                                    label: 'Température (°C)',
                                     data: <%= request.getAttribute("salleTemp") %>,
-                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    backgroundColor: 'rgba(60, 60, 60, 0.2)',
+                                    borderColor: 'rgba(60, 60, 60, 1)',
                                     borderWidth: 1
                                 },
                                 {
-                                    label: 'Humidité',
+                                    label: 'Humidité (%)',
                                     data: <%= request.getAttribute("salleHumid") %>,
-                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    backgroundColor: 'rgba(60, 220, 113, 0.2)',
+                                    borderColor: 'rgba(60, 200, 113, 1)',
                                     borderWidth: 1
                                 }
                             ]
@@ -723,28 +925,65 @@
                             }
                         }
                     });
-                </script>
-                <div class="border-top border-3 my-5"></div>
-                <h2 class="my-5 text-center">Rendement des Récoltes</h2>
-                <canvas id="recolteChart"></canvas>
-                <script>
-                    var ctx2 = document.getElementById('recolteChart').getContext('2d');
-                    var recolteChart = new Chart(ctx2, {
+                    
+                    var harvestCtx = document.getElementById('harvestChart').getContext('2d');
+                    var harvestChart = new Chart(harvestCtx, {
                         type: 'line',
                         data: {
                             labels: <%= request.getAttribute("recolteDates") %>,
-                            datasets: [{
-                                label: 'Rendement',
-                                data: <%= request.getAttribute("recolteRendements") %>,
-                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
-                                borderWidth: 1
-                            }]
+                            datasets: [
+                                {
+                                    label: 'Rendement (g)',
+                                    data: <%= request.getAttribute("recolteRendements") %>,
+                                    backgroundColor: 'rgba(60, 220, 113, 0.2)',
+                                    borderColor: 'rgba(60, 200, 113, 1)',
+                                    borderWidth: 1,
+                                    fill: false
+                                }
+                            ]
                         },
                         options: {
                             scales: {
                                 y: {
                                     beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+                    var plantCtx = document.getElementById('plantChart').getContext('2d');
+                    var plantChart = new Chart(plantCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Plantes récoltées', 'Plantes non récoltées'],
+                            datasets: [
+                                {
+                                    label: 'Nombre de Plantes',
+                                    data: [<%= plantesRecoltees %>, <%= plantesNonRecoltees %>],
+                                    backgroundColor: [
+                                        'rgba(60, 220, 113, 0.2)',
+                                        'rgba(60, 60, 60, 0.2)'
+                                    ],
+                                    borderColor: [
+                                        'rgba(60, 200, 113, 1)',
+                                        'rgba(60, 60, 60, 1)'
+                                    ],
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(tooltipItem) {
+                                            return tooltipItem.label + ': ' + tooltipItem.raw;
+                                        }
+                                    }
                                 }
                             }
                         }

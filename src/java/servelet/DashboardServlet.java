@@ -7,7 +7,7 @@ package servelet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.*;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -59,35 +59,49 @@ public class DashboardServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
+         try {
             SalleCulture salleCulture = new SalleCulture();
             Plante plante = new Plante();
             JournalCulture journalCulture = new JournalCulture();
             Recolte recolte = new Recolte();
-            
+
             List<SalleCulture> salles = salleCulture.getAll();
             List<Plante> plantes = plante.getAll();
             List<JournalCulture> journaux = journalCulture.getAll();
             List<Recolte> recoltes = recolte.getAll();
-            
+
             request.setAttribute("salles", salles);
             request.setAttribute("plantes", plantes);
             request.setAttribute("journaux", journaux);
             request.setAttribute("recoltes", recoltes);
-            
+
             // Convert data to JSON format for Chart.js
             String salleNoms = salles.stream().map(SalleCulture::getNom).collect(Collectors.joining("\",\"", "[\"", "\"]"));
             String salleTemp = salles.stream().map(s -> String.valueOf(s.getTemperature())).collect(Collectors.joining(",", "[", "]"));
             String salleHumid = salles.stream().map(s -> String.valueOf(s.getHumidite())).collect(Collectors.joining(",", "[", "]"));
 
-            String recolteDates = recoltes.stream().map(r -> r.getDate().toString()).collect(Collectors.joining("\",\"", "[\"", "\"]"));
-            String recolteRendements = recoltes.stream().map(r -> String.valueOf(r.getRendement())).collect(Collectors.joining(",", "[", "]"));
+            Map<Date, Integer> rendementByDate = recoltes.stream()
+                    .collect(Collectors.groupingBy(Recolte::getDate, Collectors.summingInt(Recolte::getRendement)));
+
+            // Sort dates in ascending order
+            List<Date> sortedDates = rendementByDate.keySet().stream()
+                    .sorted(Comparator.naturalOrder())
+                    .collect(Collectors.toList());
+
+            List<String> dates = sortedDates.stream().map(Date::toString).collect(Collectors.toList());
+            List<Integer> rendements = sortedDates.stream().map(rendementByDate::get).collect(Collectors.toList());
+
+            String recolteDates = dates.stream().collect(Collectors.joining("\",\"", "[\"", "\"]"));
+            String recolteRendements = rendements.stream().map(String::valueOf).collect(Collectors.joining(",", "[", "]"));
 
             request.setAttribute("salleNoms", salleNoms);
             request.setAttribute("salleTemp", salleTemp);
             request.setAttribute("salleHumid", salleHumid);
             request.setAttribute("recolteDates", recolteDates);
             request.setAttribute("recolteRendements", recolteRendements);
+            
+            request.setAttribute("plantesRecoltees", recolte.getNombrePlantesRecoltees());
+            request.setAttribute("plantesNonRecoltees", recolte.getNombrePlantesNonRecoltees());
 
             request.getRequestDispatcher("Acceuil.jsp?dashboard").forward(request, response);
 

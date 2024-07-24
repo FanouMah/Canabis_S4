@@ -96,4 +96,90 @@ function showCollapse(id){
         }
     }
 }
+function confirmDeletePlante(id) {
+    Swal.fire({
+        title: "Vous êtes sûr de supprimer la plante " +id+ " ?",
+        text: "Cela implique la suppression des journal de culture et récolte lie à cette plante si il y en a!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui',
+        cancelButtonText: 'Non'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'PlanteServelet?action=remove&id=' + id;
+        }
+    });
+}
 
+function confirmDeleteSalle(id) {
+    Swal.fire({
+        title: "Vous êtes sûr de supprimer la salle " +id+ " ?",
+        text: "Cela implique la suppression des plantes dans cette salle ainsi que les journal de culture et récolte lie aux plantes si il y en a!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui',
+        cancelButtonText: 'Non'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'SalleCultureServelet?action=remove&id=' + id;
+        }
+    });
+}
+
+
+function confirmDeleteJournal(id) {
+    Swal.fire({
+        title: "Vous êtes sûr de supprimer le journal " +id+" ?",
+        text: " ",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui',
+        cancelButtonText: 'Non'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'JournalCultureServelet?action=remove&id=' + id;
+        }
+    });
+}
+
+
+function confirmDeleteRecolte(id) {
+    Swal.fire({
+        title: "Vous êtes sûr de supprimer la récolte " +id+" ?",
+        text: " ",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui',
+        cancelButtonText: 'Non'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'RecolteServelet?action=remove&id=' + id;
+        }
+    });
+}
+
+
+function confirmDeleteAccount(id) {
+    Swal.fire({
+        title: "Vous êtes sûr de supprimer votre compte ?",
+        text: "Vous seriez déconnectée et ne pourrait plus utiliser votre compte actuel",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui',
+        cancelButtonText: 'Non'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'UtilisateurServelet?action=remove&id=' + id;
+        }
+    });
+}

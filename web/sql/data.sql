@@ -1,0 +1,147 @@
+-- Insertion des données pour les salles de culture
+INSERT INTO salleCulture (nom_salle, temperature, humidite) VALUES
+('Salle Nord', 22, 60),
+('Salle Sud', 24, 55),
+('Salle Est', 23, 58),
+('Salle Ouest', 21, 62);
+
+-- Insertion des données pour les plantes (avec les nouvelles dates de début et mises à jour)
+INSERT INTO plante (espece, variete, salleCulture_id) VALUES
+-- Cannabis Sativa
+('Cannabis Sativa', 'Jack Herer', 'SC1'),
+('Cannabis Sativa', 'Green Crack', 'SC1'),
+('Cannabis Sativa', 'Sour Diesel', 'SC1'),
+('Cannabis Sativa', 'Maui Waui', 'SC1'),
+-- Cannabis Indica
+('Cannabis Indica', 'Granddaddy Purple', 'SC2'),
+('Cannabis Indica', 'Northern Lights', 'SC2'),
+('Cannabis Indica', 'Bubba Kush', 'SC2'),
+('Cannabis Indica', 'Afghan Kush', 'SC2'),
+-- Cannabis Ruderalis
+('Cannabis Ruderalis', 'Lowryder', 'SC3'),
+('Cannabis Ruderalis', 'Auto AK', 'SC3'),
+('Cannabis Ruderalis', 'Auto Blueberry', 'SC3'),
+('Cannabis Ruderalis', 'Auto White Widow', 'SC3'),
+-- Hybride
+('Hybride', 'Girl Scout Cookies', 'SC4'),
+('Hybride', 'OG Kush', 'SC4'),
+('Hybride', 'Blue Dream', 'SC4'),
+('Hybride', 'Super Lemon Haze', 'SC4'),
+('Hybride', 'Wedding Cake', 'SC4'),
+('Hybride', 'Amnesia Haze', 'SC4'),
+('Hybride', 'Pineapple Express', 'SC4'),
+('Hybride', 'White Rhino', 'SC4');
+
+-- Insertion des données pour le journal de culture (avec les nouvelles dates de début)
+INSERT INTO journalCulture (plante_id, date, etapeCroissance, notes) VALUES
+-- Cannabis Sativa
+('PL1', '2023-11-28', 'Germination', 'Les graines ont été plantées.'),
+('PL1', '2023-12-06', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL1', '2024-01-06', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL1', '2024-03-24', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL2', '2023-11-29', 'Germination', 'Les graines ont été plantées.'),
+('PL2', '2023-12-07', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL2', '2024-01-07', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL2', '2024-03-25', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL3', '2023-11-30', 'Germination', 'Les graines ont été plantées.'),
+('PL3', '2023-12-08', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL3', '2024-01-08', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL3', '2024-03-26', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL4', '2023-12-01', 'Germination', 'Les graines ont été plantées.'),
+('PL4', '2023-12-09', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL4', '2024-01-09', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL4', '2024-03-27', 'Floraison', 'Les plants ont commencé à fleurir.'),
+-- Cannabis Indica
+('PL5', '2023-11-28', 'Germination', 'Les graines ont été plantées.'),
+('PL5', '2023-12-06', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL5', '2024-01-06', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL5', '2024-03-24', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL6', '2023-11-29', 'Germination', 'Les graines ont été plantées.'),
+('PL6', '2023-12-07', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL6', '2024-01-07', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL6', '2024-03-25', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL7', '2023-11-30', 'Germination', 'Les graines ont été plantées.'),
+('PL7', '2023-12-08', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL7', '2024-01-08', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL7', '2024-03-26', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL8', '2023-12-01', 'Germination', 'Les graines ont été plantées.'),
+('PL8', '2023-12-09', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL8', '2024-01-09', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL8', '2024-03-27', 'Floraison', 'Les plants ont commencé à fleurir.'),
+-- Cannabis Ruderalis
+('PL9', '2023-11-28', 'Germination', 'Les graines ont été plantées.'),
+('PL9', '2023-12-06', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL9', '2024-01-06', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL9', '2024-03-24', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL10', '2023-11-29', 'Germination', 'Les graines ont été plantées.'),
+('PL10', '2023-12-07', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL10', '2024-01-07', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL10', '2024-03-25', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL11', '2023-11-30', 'Germination', 'Les graines ont été plantées.'),
+('PL11', '2023-12-08', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL11', '2024-01-08', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL11', '2024-03-26', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL12', '2023-12-01', 'Germination', 'Les graines ont été plantées.'),
+('PL12', '2023-12-09', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL12', '2024-01-09', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL12', '2024-03-27', 'Floraison', 'Les plants ont commencé à fleurir.'),
+-- Hybride
+('PL13', '2023-11-28', 'Germination', 'Les graines ont été plantées.'),
+('PL13', '2023-12-06', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL13', '2024-01-06', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL13', '2024-03-24', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL14', '2023-11-29', 'Germination', 'Les graines ont été plantées.'),
+('PL14', '2023-12-07', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL14', '2024-01-07', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL14', '2024-03-25', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL15', '2023-11-30', 'Germination', 'Les graines ont été plantées.'),
+('PL15', '2023-12-08', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL15', '2024-01-08', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL15', '2024-03-26', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL16', '2023-12-01', 'Germination', 'Les graines ont été plantées.'),
+('PL16', '2023-12-09', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL16', '2024-01-09', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL16', '2024-03-27', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL17', '2023-12-02', 'Germination', 'Les graines ont été plantées.'),
+('PL17', '2023-12-10', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL17', '2024-01-10', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL17', '2024-03-28', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL18', '2023-12-03', 'Germination', 'Les graines ont été plantées.'),
+('PL18', '2023-12-11', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL18', '2024-01-11', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL18', '2024-03-29', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL19', '2023-12-04', 'Germination', 'Les graines ont été plantées.'),
+('PL19', '2023-12-12', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL19', '2024-01-12', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL19', '2024-03-30', 'Floraison', 'Les plants ont commencé à fleurir.'),
+('PL20', '2023-12-05', 'Germination', 'Les graines ont été plantées.'),
+('PL20', '2023-12-13', 'Semis', 'Les premières feuilles apparaissent.'),
+('PL20', '2024-01-13', 'Croissance végétative', 'Les plants ont développé plusieurs paires de feuilles.'),
+('PL20', '2024-03-31', 'Floraison', 'Les plants ont commencé à fleurir.');
+
+-- Insertion des données pour les récoltes (avec des dates espacées)
+INSERT INTO recolte (plante_id, date, rendement, qualite) VALUES
+-- Pour Cannabis Sativa
+('PL1', '2024-06-07', 500, 'A'),
+('PL2', '2024-06-14', 600, 'A'),
+('PL3', '2024-06-21', 450, 'B'),
+('PL4', '2024-06-28', 700, 'A'),
+-- Pour Cannabis Indica
+('PL5', '2024-07-07', 480, 'A'),
+('PL6', '2024-07-14', 550, 'A'),
+('PL7', '2024-07-21', 460, 'B'),
+-- ('PL8', '2024-07-28', 620, 'A'),
+-- Pour Cannabis Ruderalis
+('PL9', '2024-07-07', 300, 'B'),
+('PL10', '2024-07-14', 320, 'B');
+('PL11', '2024-08-21', 310, 'C'),
+('PL12', '2024-08-28', 340, 'B'),
+-- Pour Hybride
+('PL13', '2024-09-07', 500, 'A'),
+('PL14', '2024-09-14', 520, 'A'),
+('PL15', '2024-09-21', 480, 'B'),
+('PL16', '2024-09-28', 550, 'A'),
+('PL17', '2024-10-05', 540, 'A'),
+('PL18', '2024-10-12', 530, 'A'),
+('PL19', '2024-10-19', 550, 'A'),
+('PL20', '2024-10-26', 560, 'A');

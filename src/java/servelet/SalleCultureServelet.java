@@ -8,6 +8,8 @@ package servelet;
 import classes.SalleCulture;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -57,14 +59,15 @@ public class SalleCultureServelet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-                String action = request.getParameter("action");
-        if (!action.isEmpty() || action == null || action == "") {
-            
-            switch (action){
-                case  "remove":
+        String action = request.getParameter("action");
+        if (action != null && !action.isEmpty()) {
+            switch (action) {
+                case "remove":
                     removeSalleCulture(request, response);
                     break;
             }
+        } else {
+            processRequest(request, response);
         }
     }
 
@@ -80,16 +83,20 @@ public class SalleCultureServelet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (!action.isEmpty() || action == null || action == "") {
-            
-            switch (action){
-                case  "create":
+        if (action != null && !action.isEmpty()) {
+            switch (action) {
+                case "create":
                     createSalleCulture(request, response);
                     break;
-                case  "update":
+                case "update":
                     updateSalleCulture(request, response);
                     break;
+                case "search":
+                    searchSalleCulture(request, response);
+                    break;
             }
+        } else {
+            processRequest(request, response);
         }
     }
     
@@ -101,7 +108,7 @@ public class SalleCultureServelet extends HttpServlet {
         
         try {
             salle.delete(id);
-            request.setAttribute("success", "Salle de culture "+id+" supprimer");
+            request.setAttribute("success", "Salle de culture " + id + " supprimée");
             request.getRequestDispatcher("preparedSalleCutlureServelet?action=listSalleCulture").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
@@ -112,8 +119,8 @@ public class SalleCultureServelet extends HttpServlet {
     protected void createSalleCulture(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String nom = request.getParameter("nom");
-        int temperature = Integer.valueOf(request.getParameter("temperature"));
-        int humidite = Integer.valueOf(request.getParameter("humidite"));
+        int temperature = Integer.parseInt(request.getParameter("temperature"));
+        int humidite = Integer.parseInt(request.getParameter("humidite"));
         
         SalleCulture salle = new SalleCulture(null, nom, temperature, humidite);
         
@@ -131,21 +138,41 @@ public class SalleCultureServelet extends HttpServlet {
             throws ServletException, IOException {
         String id = request.getParameter("slid");
         String nom = request.getParameter("slnom");
-        String strTemperature = request.getParameter("sltemperature");
-        String strHumidite = request.getParameter("slhumidite");
-        int temperature = Integer.valueOf(strTemperature);
-        int humidite = Integer.valueOf(strHumidite);
+        int temperature = Integer.parseInt(request.getParameter("sltemperature"));
+        int humidite = Integer.parseInt(request.getParameter("slhumidite"));
         
         SalleCulture salle = new SalleCulture(id, nom, temperature, humidite);
         
         try {
             salle.update(salle);
-            request.setAttribute("success", "Salle de culture "+id+" modifiée");
+            request.setAttribute("success", "Salle de culture " + id + " modifiée");
             request.getRequestDispatcher("preparedSalleCutlureServelet?action=listSalleCulture").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("preparedSalleCutlureServelet?action=listSalleCulture").forward(request, response);
         }
+    }
+    
+    protected void searchSalleCulture(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+           String nom = request.getParameter("nom");
+            Integer tempMin = request.getParameter("tempMin").isEmpty() ? null : Integer.parseInt(request.getParameter("tempMin"));
+            Integer tempMax = request.getParameter("tempMax").isEmpty() ? null : Integer.parseInt(request.getParameter("tempMax"));
+            Integer humMin = request.getParameter("humMin").isEmpty() ? null : Integer.parseInt(request.getParameter("humMin"));
+            Integer humMax = request.getParameter("humMax").isEmpty() ? null : Integer.parseInt(request.getParameter("humMax"));
+
+            SalleCulture salle = new SalleCulture();
+
+            try {
+                List<SalleCulture> results = salle.search(nom, tempMin, tempMax, humMin, humMax);
+
+                request.setAttribute("listSalleCulture", results);
+                RequestDispatcher dispat =  request.getRequestDispatcher("Acceuil.jsp?listSalleCulture");
+                dispat.forward(request, response);
+            } catch (Exception e) {
+                request.setAttribute("error", e.getMessage());
+                    request.getRequestDispatcher("Acceuil.jsp").forward(request, response);
+            }
     }
 
     /**
@@ -157,5 +184,4 @@ public class SalleCultureServelet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }
